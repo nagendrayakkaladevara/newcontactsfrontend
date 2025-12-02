@@ -38,6 +38,7 @@ This file contains the current development tasks and improvements for the Contac
 
 ## Medium Priority
 
+- [ ] Add retry buttons for API failures - Add retry functionality to all error states across the application
 - [ ] Improve error handling and user feedback
 - [ ] Add loading states optimization
 - [ ] Enhance mobile responsiveness

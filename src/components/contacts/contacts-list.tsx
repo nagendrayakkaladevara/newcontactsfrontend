@@ -3,8 +3,9 @@
  * Displays a list of contacts in a table format with loading and error states
  */
 
-import { Contact as ContactIcon, Phone, Building2, Briefcase, HeartPulse } from "lucide-react"
+import { Contact as ContactIcon, Phone, Building2, Briefcase, HeartPulse, RefreshCw } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
 import { ContactActions } from "@/components/contacts/contact-actions"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { formatPhoneNumber } from "@/lib/phone-formatter"
@@ -15,9 +16,10 @@ interface ContactsListProps {
   loading: boolean
   error: string | null
   hasSearched?: boolean
+  onRetry?: () => void
 }
 
-export function ContactsList({ contacts, loading, error, hasSearched = false }: ContactsListProps) {
+export function ContactsList({ contacts, loading, error, hasSearched = false, onRetry }: ContactsListProps) {
   const isMobile = useIsMobile()
 
   // Show loading state
@@ -66,7 +68,19 @@ export function ContactsList({ contacts, loading, error, hasSearched = false }: 
   if (error) {
     return (
       <div className="rounded-lg border border-destructive bg-destructive/10 p-6 text-center">
-        <p className="text-sm font-medium text-destructive">{error}</p>
+        <p className="text-sm font-medium text-destructive mb-4">{error}</p>
+        {onRetry && (
+          <Button
+            onClick={onRetry}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            disabled={loading}
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            Retry
+          </Button>
+        )}
       </div>
     )
   }
@@ -97,12 +111,12 @@ export function ContactsList({ contacts, loading, error, hasSearched = false }: 
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
-                <h3 className="text-base font-semibold mb-2 truncate">{contact.name}</h3>
+                <h3 className="text-base font-medium mb-2 truncate">{contact.name}</h3>
                 <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                   {contact.phone && (
                     <div className="flex items-center gap-1.5">
                       <Phone className="h-3.5 w-3.5 shrink-0" />
-                      <span className="font-medium">{formatPhoneNumber(contact.phone)}</span>
+                      <span className="font-bold text-black dark:text-white">{formatPhoneNumber(contact.phone)}</span>
                     </div>
                   )}
                   {contact.lobby && (
@@ -166,7 +180,7 @@ export function ContactsList({ contacts, loading, error, hasSearched = false }: 
             )}
             {contact.designation && (
               <div className="flex items-center gap-1.5">
-                <Building2 className="h-3.5 w-3.5 shrink-0 text-purple-500" />
+                <Briefcase className="h-3.5 w-3.5 shrink-0 text-purple-500" />
                 <span>{contact.designation}</span>
               </div>
             )}

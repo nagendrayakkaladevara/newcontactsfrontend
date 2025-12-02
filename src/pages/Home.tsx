@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useState, useCallback, useRef } from "react"
 import { useContactsSearch } from "@/hooks/use-contacts-search"
 import { ContactsSearch } from "@/components/contacts/contacts-search"
 import { ContactsList } from "@/components/contacts/contacts-list"
 import { PaginationControls } from "@/components/contacts/pagination-controls"
+import logo from "@/assets/indian-railways-logo-Bn6xvMdg-removebg-preview.png"
 
 export function Home() {
     const [lastQuery, setLastQuery] = useState("")
@@ -15,18 +16,51 @@ export function Home() {
         pagination,
         searchByName,
         searchByPhone,
+        clearResults,
     } = useContactsSearch()
+    
+    // Track if a search is in progress to prevent race conditions
+    const isSearchingRef = useRef(false)
 
-    const handleSearch = async (query: string, isPhone: boolean) => {
-        setLastQuery(query)
-        setIsPhoneSearch(isPhone)
-        setHasSearched(true)
-        if (isPhone) {
-            await searchByPhone(query)
-        } else {
-            await searchByName(query, 1)
+    const handleSearch = useCallback(async (query: string, isPhone: boolean) => {
+        // Prevent concurrent searches
+        if (isSearchingRef.current) {
+            return
         }
-    }
+
+        const trimmedQuery = query.trim()
+        
+        if (!trimmedQuery) {
+            // Clear search results when query is empty or whitespace-only
+            setHasSearched(false)
+            setLastQuery("")
+            clearResults()
+            return
+        }
+
+        // Skip if this is the same query we're already searching/displaying
+        if (trimmedQuery === lastQuery && hasSearched) {
+            return
+        }
+
+        try {
+            isSearchingRef.current = true
+            setLastQuery(trimmedQuery)
+            setIsPhoneSearch(isPhone)
+            setHasSearched(true)
+            
+            if (isPhone) {
+                await searchByPhone(trimmedQuery)
+            } else {
+                await searchByName(trimmedQuery, 1)
+            }
+        } catch (err) {
+            // Error is handled by the hook
+            console.error("Search error:", err)
+        } finally {
+            isSearchingRef.current = false
+        }
+    }, [lastQuery, hasSearched, searchByName, searchByPhone, clearResults])
 
     const handlePageChange = async (page: number) => {
         if (lastQuery && !isPhoneSearch) {
@@ -36,12 +70,16 @@ export function Home() {
 
     return (
         <div className="flex flex-col gap-6">
-            {/* Welcome Section */}
-            <div className="flex flex-col gap-2 my-4">
-                <h1 className="text-xl font-bold tracking-tight">Welcome to Employee Contact Directory</h1>
-                <p className="text-muted-foreground text-sm">
-                    Manage efficiently with modern employee contact directory system.
-                </p>
+            {/* Welcome Section with Logo */}
+            <div className="flex flex-col items-center gap-4 my-4">
+                <img 
+                    src={logo} 
+                    alt="Indian Railways Logo" 
+                    className="h-20 w-auto object-contain"
+                />
+                <div className="flex flex-col gap-2 text-center">
+                    <h1 className="text-xl font-bold tracking-tight">East Coast Railway, Waltair Division.</h1>
+                </div>
             </div>
 
             {/* Search Section */}
@@ -55,6 +93,11 @@ export function Home() {
                         loading={loading}
                         error={error}
                         hasSearched={hasSearched}
+                        onRetry={() => {
+                            if (lastQuery) {
+                                handleSearch(lastQuery, isPhoneSearch)
+                            }
+                        }}
                     />
                 </div>
             )}

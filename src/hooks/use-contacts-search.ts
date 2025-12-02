@@ -3,7 +3,7 @@
  * Custom React hook for searching contacts by name or phone
  */
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef } from "react"
 import { contactsService } from "@/services/contacts.service"
 import type { Contact, PaginatedContactsResponse } from "@/types/contact"
 import { ApiError } from "@/lib/api-client"
@@ -51,8 +51,14 @@ export function useContactsSearch(): UseContactsSearchReturn {
   const [pagination, setPagination] = useState<UseContactsSearchReturn["pagination"]>(
     null
   )
+  
+  // Track the latest search request to handle race conditions
+  const searchRequestIdRef = useRef(0)
 
   const searchByName = useCallback(async (query: string, page: number = 1) => {
+    // Increment request ID for this search
+    const currentRequestId = ++searchRequestIdRef.current
+    
     setLoading(true)
     setError(null)
 
@@ -63,29 +69,41 @@ export function useContactsSearch(): UseContactsSearchReturn {
       const response: PaginatedContactsResponse =
         await contactsService.searchByName(validated.query, page, 50)
 
-      setContacts(response.data)
-      setPagination({
-        page: response.pagination.page,
-        limit: response.pagination.limit,
-        total: response.pagination.total,
-        totalPages: response.pagination.totalPages,
-      })
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        setError(err.issues[0].message)
-      } else if (err instanceof ApiError) {
-        setError(err.message)
-      } else {
-        setError("Failed to search contacts. Please try again.")
+      // Only update state if this is still the latest request (handle race conditions)
+      if (currentRequestId === searchRequestIdRef.current) {
+        setContacts(response.data)
+        setPagination({
+          page: response.pagination.page,
+          limit: response.pagination.limit,
+          total: response.pagination.total,
+          totalPages: response.pagination.totalPages,
+        })
       }
-      setContacts([])
-      setPagination(null)
+    } catch (err) {
+      // Only update error if this is still the latest request
+      if (currentRequestId === searchRequestIdRef.current) {
+        if (err instanceof z.ZodError) {
+          setError(err.issues[0].message)
+        } else if (err instanceof ApiError) {
+          setError(err.message)
+        } else {
+          setError("Failed to search contacts. Please try again.")
+        }
+        setContacts([])
+        setPagination(null)
+      }
     } finally {
-      setLoading(false)
+      // Only update loading if this is still the latest request
+      if (currentRequestId === searchRequestIdRef.current) {
+        setLoading(false)
+      }
     }
   }, [])
 
   const searchByPhone = useCallback(async (phone: string) => {
+    // Increment request ID for this search
+    const currentRequestId = ++searchRequestIdRef.current
+    
     setLoading(true)
     setError(null)
 
@@ -95,30 +113,39 @@ export function useContactsSearch(): UseContactsSearchReturn {
       
       const contact: Contact = await contactsService.searchByPhone(validated.phone)
 
-      // Convert single contact to array format for consistent display
-      setContacts([contact])
-      setPagination({
-        page: 1,
-        limit: 1,
-        total: 1,
-        totalPages: 1,
-      })
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        setError(err.issues[0].message)
-      } else if (err instanceof ApiError) {
-        if (err.status === 404) {
-          setError("Contact not found")
-        } else {
-          setError(err.message)
-        }
-      } else {
-        setError("Failed to search contacts. Please try again.")
+      // Only update state if this is still the latest request (handle race conditions)
+      if (currentRequestId === searchRequestIdRef.current) {
+        // Convert single contact to array format for consistent display
+        setContacts([contact])
+        setPagination({
+          page: 1,
+          limit: 1,
+          total: 1,
+          totalPages: 1,
+        })
       }
-      setContacts([])
-      setPagination(null)
+    } catch (err) {
+      // Only update error if this is still the latest request
+      if (currentRequestId === searchRequestIdRef.current) {
+        if (err instanceof z.ZodError) {
+          setError(err.issues[0].message)
+        } else if (err instanceof ApiError) {
+          if (err.status === 404) {
+            setError("Contact not found")
+          } else {
+            setError(err.message)
+          }
+        } else {
+          setError("Failed to search contacts. Please try again.")
+        }
+        setContacts([])
+        setPagination(null)
+      }
     } finally {
-      setLoading(false)
+      // Only update loading if this is still the latest request
+      if (currentRequestId === searchRequestIdRef.current) {
+        setLoading(false)
+      }
     }
   }, [])
 

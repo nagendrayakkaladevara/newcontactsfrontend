@@ -15,10 +15,7 @@ function getInitialTheme(): Theme {
   if (savedTheme) {
     return savedTheme
   }
-  // Check system preference only if no saved preference
-  if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-    return "dark"
-  }
+  // Default to light theme if no saved preference
   return "light"
 }
 

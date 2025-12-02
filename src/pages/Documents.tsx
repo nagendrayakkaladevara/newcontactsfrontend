@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Search, FileText, ExternalLink, X } from "lucide-react"
+import { Search, FileText, ExternalLink, X, RefreshCw } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -13,27 +13,28 @@ export function Documents() {
   const [error, setError] = React.useState<string | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
 
+  // Fetch documents function
+  const fetchDocuments = React.useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await documentsService.getDocuments()
+      setDocuments(data)
+      setFilteredDocuments(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch documents")
+      console.error("Error fetching documents:", err)
+      setDocuments([])
+      setFilteredDocuments([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
   // Fetch documents on mount
   React.useEffect(() => {
-    const fetchDocuments = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const data = await documentsService.getDocuments()
-        setDocuments(data)
-        setFilteredDocuments(data)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch documents")
-        console.error("Error fetching documents:", err)
-        setDocuments([])
-        setFilteredDocuments([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchDocuments()
-  }, [])
+  }, [fetchDocuments])
 
   // Filter documents based on search query (title only)
   React.useEffect(() => {
@@ -90,7 +91,16 @@ export function Documents() {
           </p>
         </div>
         <div className="rounded-lg border border-destructive bg-destructive/10 p-6 text-center">
-          <p className="text-sm font-medium text-destructive">{error}</p>
+          <p className="text-sm font-medium text-destructive mb-4">{error}</p>
+          <Button
+            onClick={fetchDocuments}
+            variant="outline"
+            className="gap-2"
+            disabled={loading}
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            Retry
+          </Button>
         </div>
       </div>
     )
