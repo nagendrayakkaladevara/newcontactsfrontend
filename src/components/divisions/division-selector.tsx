@@ -1,7 +1,5 @@
-import * as React from "react"
 import { Briefcase, X } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useIsMobile } from "@/hooks/use-mobile"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface DivisionSelectorProps {
@@ -19,7 +17,6 @@ export function DivisionSelector({
   loading = false,
   error = null,
 }: DivisionSelectorProps) {
-  const isMobile = useIsMobile()
 
   const toggleDivision = (division: string) => {
     if (selectedDivisions.includes(division)) {

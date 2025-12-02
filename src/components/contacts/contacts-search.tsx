@@ -3,7 +3,7 @@
  * Search bar with name/phone toggle for searching contacts
  */
 
-import { useState, FormEvent } from "react"
+import { useState, type FormEvent } from "react"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"

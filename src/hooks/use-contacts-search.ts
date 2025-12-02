@@ -72,7 +72,7 @@ export function useContactsSearch(): UseContactsSearchReturn {
       })
     } catch (err) {
       if (err instanceof z.ZodError) {
-        setError(err.errors[0].message)
+        setError(err.issues[0].message)
       } else if (err instanceof ApiError) {
         setError(err.message)
       } else {
@@ -105,7 +105,7 @@ export function useContactsSearch(): UseContactsSearchReturn {
       })
     } catch (err) {
       if (err instanceof z.ZodError) {
-        setError(err.errors[0].message)
+        setError(err.issues[0].message)
       } else if (err instanceof ApiError) {
         if (err.status === 404) {
           setError("Contact not found")

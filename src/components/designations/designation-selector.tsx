@@ -1,7 +1,5 @@
-import * as React from "react"
 import { Building2, X } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useIsMobile } from "@/hooks/use-mobile"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface DesignationSelectorProps {
@@ -19,7 +17,6 @@ export function DesignationSelector({
   loading = false,
   error = null,
 }: DesignationSelectorProps) {
-  const isMobile = useIsMobile()
 
   const toggleDesignation = (designation: string) => {
     if (selectedDesignations.includes(designation)) {

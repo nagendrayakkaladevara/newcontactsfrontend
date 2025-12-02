@@ -1,7 +1,5 @@
-import * as React from "react"
 import { HeartPulse, X } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useIsMobile } from "@/hooks/use-mobile"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface BloodGroupSelectorProps {
@@ -19,7 +17,6 @@ export function BloodGroupSelector({
   loading = false,
   error = null,
 }: BloodGroupSelectorProps) {
-  const isMobile = useIsMobile()
 
   const toggleGroup = (group: string) => {
     if (selectedGroups.includes(group)) {

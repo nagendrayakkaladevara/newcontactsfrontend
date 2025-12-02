@@ -51,6 +51,7 @@ export function BloodGroups() {
         setContactsError(null)
         const response = await contactsService.getContactsByBloodGroup(
           selectedGroups,
+          [],
           contactsPage,
           50
         )
