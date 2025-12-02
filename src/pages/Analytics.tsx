@@ -1,0 +1,572 @@
+import * as React from "react"
+import {
+  Contact,
+  Eye,
+  HeartPulse,
+  Building2,
+  Briefcase,
+  TrendingUp,
+  Calendar,
+  CheckCircle2,
+  XCircle,
+  Clock,
+} from "lucide-react"
+import { analyticsService } from "@/services/analytics.service"
+import type {
+  AnalyticsOverview,
+  BloodGroupDistribution,
+  LobbyDistribution,
+  DesignationDistribution,
+  GrowthData,
+  RecentContacts,
+} from "@/types/analytics"
+import { Skeleton } from "@/components/ui/skeleton"
+import { cn } from "@/lib/utils"
+import { formatPhoneNumber } from "@/lib/phone-formatter"
+
+export function Analytics() {
+  const [overview, setOverview] = React.useState<AnalyticsOverview | null>(null)
+  const [bloodGroupDist, setBloodGroupDist] = React.useState<BloodGroupDistribution | null>(null)
+  const [lobbyDist, setLobbyDist] = React.useState<LobbyDistribution | null>(null)
+  const [designationDist, setDesignationDist] = React.useState<DesignationDistribution | null>(null)
+  const [growthData, setGrowthData] = React.useState<GrowthData | null>(null)
+  const [recentContacts, setRecentContacts] = React.useState<RecentContacts | null>(null)
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
+  const [growthDays, setGrowthDays] = React.useState(7)
+
+  React.useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        const [overviewData, bgData, lobbyData, desData, growth, recent] = await Promise.all([
+          analyticsService.getOverview(),
+          analyticsService.getBloodGroupDistribution(),
+          analyticsService.getLobbyDistribution(),
+          analyticsService.getDesignationDistribution(),
+          analyticsService.getGrowth(growthDays),
+          analyticsService.getRecentContacts(10),
+        ])
+
+        setOverview(overviewData)
+        setBloodGroupDist(bgData)
+        setLobbyDist(lobbyData)
+        setDesignationDist(desData)
+        setGrowthData(growth)
+        setRecentContacts(recent)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch analytics")
+        console.error("Error fetching analytics:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAnalytics()
+  }, [growthDays])
+
+  const handleGrowthDaysChange = (days: number) => {
+    setGrowthDays(days)
+    setLoading(true)
+    analyticsService
+      .getGrowth(days)
+      .then(setGrowthData)
+      .catch((err) => {
+        console.error("Error fetching growth data:", err)
+      })
+      .finally(() => setLoading(false))
+  }
+
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
+          <p className="text-muted-foreground">View statistics and insights about your contacts.</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[...Array(8)].map((_, i) => (
+            <Skeleton key={i} className="h-32 rounded-lg" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
+          <p className="text-muted-foreground">View statistics and insights about your contacts.</p>
+        </div>
+        <div className="rounded-lg border border-destructive bg-destructive/10 p-6 text-center">
+          <p className="text-sm font-medium text-destructive">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Header */}
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-bold tracking-tight">Analytics Dashboard</h1>
+        <p className="text-muted-foreground">
+          Comprehensive insights and statistics about your contacts.
+        </p>
+      </div>
+
+      {/* Overview Cards */}
+      {overview && (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="Total Contacts"
+            value={overview.totalContacts}
+            icon={Contact}
+            color="blue"
+          />
+          <StatCard
+            title="Total Visits"
+            value={overview.visitCount}
+            icon={Eye}
+            color="purple"
+          />
+          <StatCard
+            title="Recent visits (7 Days)"
+            value={overview.recentContacts7Days}
+            icon={Calendar}
+            color="green"
+          />
+          <StatCard
+            title="Recent visits (30 Days)"
+            value={overview.recentContacts30Days}
+            icon={TrendingUp}
+            color="orange"
+          />
+        </div>
+      )}
+
+      {/* Coverage Metrics */}
+      {overview && (
+        <div className="grid gap-4 md:grid-cols-2">
+          <CoverageCard
+            title="Blood Group Coverage"
+            covered={overview.contactsWithBloodGroup}
+            total={overview.totalContacts}
+            percentage={parseFloat(overview.bloodGroupCoverage)}
+            missing={overview.contactsWithoutBloodGroup}
+            icon={HeartPulse}
+            color="red"
+          />
+          <CoverageCard
+            title="Lobby Coverage"
+            covered={overview.contactsWithLobby}
+            total={overview.totalContacts}
+            percentage={parseFloat(overview.lobbyCoverage)}
+            missing={overview.contactsWithoutLobby}
+            icon={Briefcase}
+            color="blue"
+          />
+        </div>
+      )}
+
+      {/* Distribution Charts */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {bloodGroupDist && (
+          <DistributionChart
+            title="Blood Group Distribution"
+            data={bloodGroupDist.distribution}
+            total={bloodGroupDist.total}
+            getLabel={(item) => item.bloodGroup || ""}
+            icon={HeartPulse}
+            color="red"
+          />
+        )}
+
+        {lobbyDist && (
+          <DistributionChart
+            title="Lobby Distribution"
+            data={lobbyDist.distribution}
+            total={lobbyDist.total}
+            getLabel={(item) => item.lobby || ""}
+            icon={Briefcase}
+            color="blue"
+          />
+        )}
+      </div>
+
+      {/* Designation Distribution - Full Width */}
+      {designationDist && (
+        <DistributionChart
+          title="Designation Distribution"
+          data={designationDist.distribution}
+          total={designationDist.total}
+          getLabel={(item) => item.designation || ""}
+          icon={Building2}
+          color="purple"
+        />
+      )}
+
+      {/* Growth Chart and Recent Contacts */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {growthData && (
+          <GrowthChart data={growthData} days={growthDays} onDaysChange={handleGrowthDaysChange} />
+        )}
+
+        {recentContacts && <RecentContactsCard data={recentContacts} />}
+      </div>
+    </div>
+  )
+}
+
+interface StatCardProps {
+  title: string
+  value: number
+  icon: React.ComponentType<{ className?: string }>
+  color: "blue" | "purple" | "green" | "orange" | "red"
+}
+
+function StatCard({ title, value, icon: Icon, color }: StatCardProps) {
+  const colorClasses = {
+    blue: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+    purple: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+    green: "bg-green-500/10 text-green-600 dark:text-green-400",
+    orange: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+    red: "bg-red-500/10 text-red-600 dark:text-red-400",
+  }
+
+  return (
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <p className="text-3xl font-bold">{value.toLocaleString()}</p>
+        </div>
+        <div className={cn("rounded-full p-3", colorClasses[color])}>
+          <Icon className="h-6 w-6" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+interface CoverageCardProps {
+  title: string
+  covered: number
+  total: number
+  percentage: number
+  missing: number
+  icon: React.ComponentType<{ className?: string }>
+  color: "red" | "blue"
+}
+
+function CoverageCard({
+  title,
+  covered,
+  total: _total,
+  percentage,
+  missing,
+  icon: Icon,
+  color,
+}: CoverageCardProps) {
+  const colorClasses = {
+    red: {
+      bg: "bg-red-500",
+      text: "text-red-600 dark:text-red-400",
+      iconBg: "bg-red-500/10",
+    },
+    blue: {
+      bg: "bg-blue-500",
+      text: "text-blue-600 dark:text-blue-400",
+      iconBg: "bg-blue-500/10",
+    },
+  }
+
+  const colors = colorClasses[color]
+
+  return (
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className={cn("rounded-full p-2", colors.iconBg)}>
+            <Icon className={cn("h-5 w-5", colors.text)} />
+          </div>
+          <div>
+            <h3 className="font-semibold">{title}</h3>
+            <p className="text-sm text-muted-foreground">{percentage.toFixed(2)}% coverage</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <span className="text-muted-foreground">With data</span>
+          </div>
+          <span className="font-medium">{covered}</span>
+        </div>
+
+        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div
+            className={cn("h-full transition-all duration-500", colors.bg)}
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
+
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <XCircle className="h-4 w-4 text-muted-foreground" />
+            <span className="text-muted-foreground">Missing data</span>
+          </div>
+          <span className="font-medium text-muted-foreground">{missing}</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+interface DistributionChartProps {
+  title: string
+  data: Array<{ count: number; percentage: string; bloodGroup?: string; lobby?: string; designation?: string }>
+  total: number
+  getLabel: (item: any) => string
+  icon: React.ComponentType<{ className?: string }>
+  color: "red" | "blue" | "purple"
+}
+
+function DistributionChart({ title, data, total, getLabel, icon: Icon, color }: DistributionChartProps) {
+  const colorClasses = {
+    red: {
+      bg: "bg-red-500",
+      text: "text-red-600 dark:text-red-400",
+      iconBg: "bg-red-500/10",
+      bar: "bg-red-500",
+    },
+    blue: {
+      bg: "bg-blue-500",
+      text: "text-blue-600 dark:text-blue-400",
+      iconBg: "bg-blue-500/10",
+      bar: "bg-blue-500",
+    },
+    purple: {
+      bg: "bg-purple-500",
+      text: "text-purple-600 dark:text-purple-400",
+      iconBg: "bg-purple-500/10",
+      bar: "bg-purple-500",
+    },
+  }
+
+  const colors = colorClasses[color]
+  const maxCount = Math.max(...data.map((item) => item.count), 1)
+
+  return (
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className={cn("rounded-full p-2", colors.iconBg)}>
+            <Icon className={cn("h-5 w-5", colors.text)} />
+          </div>
+          <div>
+            <h3 className="font-semibold">{title}</h3>
+            <p className="text-sm text-muted-foreground">Total: {total}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {data.map((item, index) => {
+          const label = getLabel(item)
+          const percentage = parseFloat(item.percentage)
+          const width = (item.count / maxCount) * 100
+
+          return (
+            <div key={index} className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium">{label}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-muted-foreground">{item.count}</span>
+                  <span className="font-semibold">{percentage.toFixed(2)}%</span>
+                </div>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className={cn("h-full transition-all duration-500", colors.bar)}
+                  style={{ width: `${width}%` }}
+                />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+interface GrowthChartProps {
+  data: GrowthData
+  days: number
+  onDaysChange: (days: number) => void
+}
+
+function GrowthChart({ data, days, onDaysChange }: GrowthChartProps) {
+  const maxCumulative = Math.max(...data.dailyGrowth.map((d) => d.cumulative), 1)
+  const maxDaily = Math.max(...data.dailyGrowth.map((d) => d.count), 1)
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+  }
+
+  return (
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="rounded-full bg-green-500/10 p-2">
+            <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+          </div>
+          <div>
+            <h3 className="font-semibold">Contacts Growth</h3>
+            <p className="text-sm text-muted-foreground">{data.period}</p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          {[7, 30, 90, 365].map((d) => (
+            <button
+              key={d}
+              onClick={() => onDaysChange(d)}
+              className={cn(
+                "rounded-md px-3 py-1 text-xs font-medium transition-colors",
+                days === d
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              )}
+            >
+              {d}d
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mb-4 flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <div className="h-3 w-3 rounded-full bg-green-500" />
+          <span className="text-sm text-muted-foreground">Total Added</span>
+          <span className="text-sm font-semibold">{data.totalAdded}</span>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        {data.dailyGrowth.slice(-14).map((day, index) => {
+          const cumulativeWidth = (day.cumulative / maxCumulative) * 100
+          const dailyWidth = maxDaily > 0 ? (day.count / maxDaily) * 100 : 0
+
+          return (
+            <div key={index} className="space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">{formatDate(day.date)}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-muted-foreground">+{day.count}</span>
+                  <span className="font-medium">{day.cumulative}</span>
+                </div>
+              </div>
+              <div className="relative h-4 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="absolute left-0 top-0 h-full bg-green-500/30 transition-all duration-300"
+                  style={{ width: `${cumulativeWidth}%` }}
+                />
+                <div
+                  className="absolute left-0 top-0 h-full bg-green-500 transition-all duration-300"
+                  style={{ width: `${dailyWidth}%` }}
+                />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+interface RecentContactsCardProps {
+  data: RecentContacts
+}
+
+function RecentContactsCard({ data }: RecentContactsCardProps) {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffTime = Math.abs(now.getTime() - date.getTime())
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+
+    if (diffDays === 0) return "Today"
+    if (diffDays === 1) return "Yesterday"
+    if (diffDays < 7) return `${diffDays} days ago`
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+  }
+
+  return (
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="rounded-full bg-blue-500/10 p-2">
+          <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+        </div>
+        <div>
+          <h3 className="font-semibold">Recent Contacts</h3>
+          <p className="text-sm text-muted-foreground">Last {data.count} added contacts</p>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {data.contacts.length === 0 ? (
+          <p className="text-center text-sm text-muted-foreground py-8">
+            No recent contacts found
+          </p>
+        ) : (
+          data.contacts.map((contact) => (
+            <div
+              key={contact.id}
+              className="flex items-start justify-between rounded-lg border bg-muted/30 p-3 transition-colors hover:bg-muted/50"
+            >
+              <div className="flex-1 space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{contact.name}</span>
+                  {contact.bloodGroup && (
+                    <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-950/30 dark:text-red-400">
+                      {contact.bloodGroup}
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                  {contact.phone && (
+                    <span className="flex items-center gap-1">
+                      {formatPhoneNumber(contact.phone)}
+                    </span>
+                  )}
+                  {contact.lobby && (
+                    <span className="flex items-center gap-1">
+                      <Briefcase className="h-3 w-3" />
+                      {contact.lobby}
+                    </span>
+                  )}
+                  {contact.designation && (
+                    <span className="flex items-center gap-1">
+                      <Building2 className="h-3 w-3" />
+                      {contact.designation}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="ml-4 text-xs text-muted-foreground">
+                {formatDate(contact.createdAt)}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
