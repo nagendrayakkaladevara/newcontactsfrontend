@@ -3,7 +3,7 @@
  * Displays a list of contacts in a table format with loading and error states
  */
 
-import { Contact as ContactIcon, Phone, Briefcase, HeartPulse } from "lucide-react"
+import { Contact as ContactIcon, Phone, Building2, Briefcase, HeartPulse } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ContactActions } from "@/components/contacts/contact-actions"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -107,8 +107,14 @@ export function ContactsList({ contacts, loading, error, hasSearched = false }: 
                   )}
                   {contact.lobby && (
                     <div className="flex items-center gap-1.5">
-                      <Briefcase className="h-3.5 w-3.5 shrink-0" />
+                      <Building2 className="h-3.5 w-3.5 shrink-0 text-blue-500" />
                       <span>{contact.lobby}</span>
+                    </div>
+                  )}
+                  {contact.designation && (
+                    <div className="flex items-center gap-1.5">
+                      <Briefcase className="h-3.5 w-3.5 shrink-0 text-purple-500" />
+                      <span>{contact.designation}</span>
                     </div>
                   )}
                   {contact.bloodGroup && (
@@ -154,8 +160,14 @@ export function ContactsList({ contacts, loading, error, hasSearched = false }: 
             )}
             {contact.lobby && (
               <div className="flex items-center gap-1.5">
-                <Briefcase className="h-3.5 w-3.5 shrink-0" />
+                <Building2 className="h-3.5 w-3.5 shrink-0 text-blue-500" />
                 <span>{contact.lobby}</span>
+              </div>
+            )}
+            {contact.designation && (
+              <div className="flex items-center gap-1.5">
+                <Building2 className="h-3.5 w-3.5 shrink-0 text-purple-500" />
+                <span>{contact.designation}</span>
               </div>
             )}
             {contact.bloodGroup && (
