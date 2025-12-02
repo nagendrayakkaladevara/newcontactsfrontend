@@ -17,7 +17,9 @@ interface ContactsSearchProps {
 
 export function ContactsSearch({ onSearch, loading }: ContactsSearchProps) {
   const [query, setQuery] = useState("")
-  const [isPhoneSearch, setIsPhoneSearch] = useState(false)
+  // Phone search is disabled for now - coming soon
+  // const [isPhoneSearch, setIsPhoneSearch] = useState(false)
+  const isPhoneSearch = false
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -41,15 +43,16 @@ export function ContactsSearch({ onSearch, loading }: ContactsSearchProps) {
     }
   }
 
-  const handlePhoneCheckboxChange = (checked: boolean) => {
-    setIsPhoneSearch(checked)
-    // Clear the query if switching modes and it contains invalid characters
-    if (checked && query) {
-      const phonePattern = /^[0-9+\-\s()]*$/
-      if (!phonePattern.test(query)) {
-        setQuery("")
-      }
-    }
+  const handlePhoneCheckboxChange = (_checked: boolean) => {
+    // Phone search is disabled for now - coming soon
+    // setIsPhoneSearch(checked)
+    // // Clear the query if switching modes and it contains invalid characters
+    // if (checked && query) {
+    //   const phonePattern = /^[0-9+\-\s()]*$/
+    //   if (!phonePattern.test(query)) {
+    //     setQuery("")
+    //   }
+    // }
   }
 
   return (
@@ -74,15 +77,18 @@ export function ContactsSearch({ onSearch, loading }: ContactsSearchProps) {
       <div className="flex justify-end items-center gap-2">
         <Checkbox
           id="phone-search"
-          checked={isPhoneSearch}
+          checked={false}
           onCheckedChange={(checked) => handlePhoneCheckboxChange(checked === true)}
-          disabled={loading}
+          disabled={true}
         />
         <Label
           htmlFor="phone-search"
-          className="text-sm font-normal cursor-pointer"
+          className="text-sm font-normal cursor-not-allowed opacity-60 flex items-center gap-2"
         >
           Search by phone number
+          <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300">
+            Coming Soon
+          </span>
         </Label>
       </div>
     </form>

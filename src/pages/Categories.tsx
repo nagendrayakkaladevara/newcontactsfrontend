@@ -3,7 +3,7 @@ import { PaginationControls } from "@/components/contacts/pagination-controls"
 import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Users, Folder, HeartPulse, Briefcase } from "lucide-react"
+import { ArrowLeft, Users, Folder, HeartPulse, Briefcase, Building2 } from "lucide-react"
 import { BloodGroupSelector } from "@/components/blood-groups/blood-group-selector"
 import { DivisionSelector } from "@/components/divisions/division-selector"
 import { DesignationSelector } from "@/components/designations/designation-selector"
@@ -383,61 +383,61 @@ export function Categories() {
 
         {/* Unified Filter for All Contacts */}
         {isAllContactsCategory && (
-          <>
-            <div className="rounded-lg border bg-card p-4 shadow-sm sm:p-6">
-              <div className="mb-4">
-                <h2 className="text-lg font-semibold sm:text-xl mb-1">
-                  Filter by Blood Group
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  Select one or more blood groups to filter contacts
-                </p>
-              </div>
-              <BloodGroupSelector
-                bloodGroups={bloodGroups}
-                selectedGroups={selectedBloodGroups}
-                onSelectionChange={setSelectedBloodGroups}
-                loading={bloodGroupsLoading}
-                error={bloodGroupsError}
-              />
+          <div className="rounded-lg border bg-card p-4 shadow-sm">
+            <div className="mb-4">
+              <h2 className="text-base font-semibold mb-1">Filters</h2>
+              <p className="text-xs text-muted-foreground">
+                Select filters to find contacts
+              </p>
             </div>
+            
+            <div className="space-y-4">
+              {/* Lobby Filter */}
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Briefcase className="h-4 w-4 text-blue-500" />
+                  <h3 className="text-sm font-medium">Lobby</h3>
+                </div>
+                <DivisionSelector
+                  divisions={lobbies}
+                  selectedDivisions={selectedLobbies}
+                  onSelectionChange={setSelectedLobbies}
+                  loading={lobbiesLoading}
+                  error={lobbiesError}
+                />
+              </div>
 
-            <div className="rounded-lg border bg-card p-4 shadow-sm sm:p-6">
-              <div className="mb-4">
-                <h2 className="text-lg font-semibold sm:text-xl mb-1">
-                  Filter by Lobby
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  Select one or more lobbies to filter contacts
-                </p>
+              {/* Designation Filter */}
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Building2 className="h-4 w-4 text-purple-500" />
+                  <h3 className="text-sm font-medium">Designation</h3>
+                </div>
+                <DesignationSelector
+                  designations={designations}
+                  selectedDesignations={selectedDesignations}
+                  onSelectionChange={setSelectedDesignations}
+                  loading={designationsLoading}
+                  error={designationsError}
+                />
               </div>
-              <DivisionSelector
-                divisions={lobbies}
-                selectedDivisions={selectedLobbies}
-                onSelectionChange={setSelectedLobbies}
-                loading={lobbiesLoading}
-                error={lobbiesError}
-              />
-            </div>
 
-            <div className="rounded-lg border bg-card p-4 shadow-sm sm:p-6">
-              <div className="mb-4">
-                <h2 className="text-lg font-semibold sm:text-xl mb-1">
-                  Filter by Designation
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  Select one or more designations to filter contacts
-                </p>
+              {/* Blood Group Filter */}
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <HeartPulse className="h-4 w-4 text-red-500" />
+                  <h3 className="text-sm font-medium">Blood Group</h3>
+                </div>
+                <BloodGroupSelector
+                  bloodGroups={bloodGroups}
+                  selectedGroups={selectedBloodGroups}
+                  onSelectionChange={setSelectedBloodGroups}
+                  loading={bloodGroupsLoading}
+                  error={bloodGroupsError}
+                />
               </div>
-              <DesignationSelector
-                designations={designations}
-                selectedDesignations={selectedDesignations}
-                onSelectionChange={setSelectedDesignations}
-                loading={designationsLoading}
-                error={designationsError}
-              />
             </div>
-          </>
+          </div>
         )}
 
         {/* Blood Groups Selector */}

@@ -3,16 +3,8 @@
  * Displays a list of contacts in a table format with loading and error states
  */
 
-import { Contact as ContactIcon } from "lucide-react"
+import { Contact as ContactIcon, Phone, Briefcase, HeartPulse } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import { ContactActions } from "@/components/contacts/contact-actions"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { formatPhoneNumber } from "@/lib/phone-formatter"
@@ -32,26 +24,19 @@ export function ContactsList({ contacts, loading, error, hasSearched = false }: 
   if (loading) {
     if (isMobile) {
       return (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="rounded-lg border bg-card p-4 shadow-sm">
-              <div className="flex items-start justify-between mb-3">
-                <Skeleton className="h-5 w-32" />
+            <div key={i} className="rounded-lg border bg-card p-3 shadow-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <Skeleton className="h-5 w-32 mb-2" />
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
                 <Skeleton className="h-8 w-16 rounded-md" />
-              </div>
-              <div className="space-y-1.5">
-                <div className="flex justify-between">
-                  <Skeleton className="h-4 w-16" />
-                  <Skeleton className="h-4 w-28" />
-                </div>
-                <div className="flex justify-between">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-4 w-24" />
-                </div>
-                <div className="flex justify-between">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-4 w-12" />
-                </div>
               </div>
             </div>
           ))}
@@ -59,39 +44,20 @@ export function ContactsList({ contacts, loading, error, hasSearched = false }: 
       )
     }
     return (
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="h-9">Name</TableHead>
-              <TableHead className="h-9">Phone</TableHead>
-              <TableHead className="h-9">Lobby</TableHead>
-              <TableHead className="h-9">Blood Group</TableHead>
-              <TableHead className="h-9">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <TableRow key={i}>
-                <TableCell className="h-9 py-2">
-                  <Skeleton className="h-4 w-36" />
-                </TableCell>
-                <TableCell className="h-9 py-2">
-                  <Skeleton className="h-4 w-28" />
-                </TableCell>
-                <TableCell className="h-9 py-2">
-                  <Skeleton className="h-4 w-32" />
-                </TableCell>
-                <TableCell className="h-9 py-2">
-                  <Skeleton className="h-4 w-12" />
-                </TableCell>
-                <TableCell className="h-9 py-2">
-                  <Skeleton className="h-8 w-20" />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="rounded-lg border bg-card p-4 shadow-sm">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <Skeleton className="h-5 w-32 flex-1" />
+              <Skeleton className="h-8 w-16 rounded-md" />
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+          </div>
+        ))}
       </div>
     )
   }
@@ -123,32 +89,40 @@ export function ContactsList({ contacts, loading, error, hasSearched = false }: 
   // Mobile card layout
   if (isMobile) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-2">
         {contacts.map((contact) => (
           <div
             key={contact.id}
-            className="rounded-lg border bg-card p-4 shadow-sm"
+            className="rounded-lg border bg-card p-3 shadow-sm hover:shadow-md transition-shadow"
           >
-            <div className="flex items-start justify-between mb-3">
-              <h3 className="text-base font-semibold">{contact.name}</h3>
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-semibold mb-2 truncate">{contact.name}</h3>
+                <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                  {contact.phone && (
+                    <div className="flex items-center gap-1.5">
+                      <Phone className="h-3.5 w-3.5 shrink-0" />
+                      <span className="font-medium">{formatPhoneNumber(contact.phone)}</span>
+                    </div>
+                  )}
+                  {contact.lobby && (
+                    <div className="flex items-center gap-1.5">
+                      <Briefcase className="h-3.5 w-3.5 shrink-0" />
+                      <span>{contact.lobby}</span>
+                    </div>
+                  )}
+                  {contact.bloodGroup && (
+                    <div className="flex items-center gap-1.5">
+                      <HeartPulse className="h-3.5 w-3.5 shrink-0 text-red-500" />
+                      <span className="font-medium">{contact.bloodGroup}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
               <ContactActions
                 phone={contact.phone || ""}
                 contactName={contact.name}
               />
-            </div>
-            <div className="space-y-1.5 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Phone:</span>
-                <span className="text-muted-foreground font-bold">{contact.phone ? formatPhoneNumber(contact.phone) : "-"}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Lobby:</span>
-                <span>{contact.lobby || "-"}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Blood Group:</span>
-                <span>{contact.bloodGroup || "-"}</span>
-              </div>
             </div>
           </div>
         ))}
@@ -156,38 +130,43 @@ export function ContactsList({ contacts, loading, error, hasSearched = false }: 
     )
   }
 
-  // Desktop table layout
+  // Desktop card layout
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="h-9">Name</TableHead>
-            <TableHead className="h-9">Phone</TableHead>
-            <TableHead className="h-9">Lobby</TableHead>
-            <TableHead className="h-9">Blood Group</TableHead>
-            <TableHead className="h-9">Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {contacts.map((contact) => (
-            <TableRow key={contact.id}>
-              <TableCell className="h-9 py-2 font-medium">{contact.name}</TableCell>
-              <TableCell className="h-9 py-2">
-                {contact.phone ? formatPhoneNumber(contact.phone) : "-"}
-              </TableCell>
-              <TableCell className="h-9 py-2">{contact.lobby || "-"}</TableCell>
-              <TableCell className="h-9 py-2">{contact.bloodGroup || "-"}</TableCell>
-              <TableCell className="h-9 py-2">
-                <ContactActions
-                  phone={contact.phone || ""}
-                  contactName={contact.name}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+      {contacts.map((contact) => (
+        <div
+          key={contact.id}
+          className="rounded-lg border bg-card p-4 shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <h3 className="text-base font-semibold truncate flex-1">{contact.name}</h3>
+            <ContactActions
+              phone={contact.phone || ""}
+              contactName={contact.name}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+            {contact.phone && (
+              <div className="flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5 shrink-0" />
+                <span className="font-medium">{formatPhoneNumber(contact.phone)}</span>
+              </div>
+            )}
+            {contact.lobby && (
+              <div className="flex items-center gap-1.5">
+                <Briefcase className="h-3.5 w-3.5 shrink-0" />
+                <span>{contact.lobby}</span>
+              </div>
+            )}
+            {contact.bloodGroup && (
+              <div className="flex items-center gap-1.5">
+                <HeartPulse className="h-3.5 w-3.5 shrink-0 text-red-500" />
+                <span className="font-medium">{contact.bloodGroup}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
