@@ -67,7 +67,13 @@ export function Documents() {
         {/* Documents skeleton */}
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-lg" />
+            <div key={i} className="flex items-center gap-4 rounded-lg border bg-card p-4 shadow-sm">
+              <Skeleton className="h-10 w-10 rounded-md shrink-0" />
+              <div className="min-w-0 flex-1">
+                <Skeleton className="h-4 w-3/4 mb-2" />
+                <Skeleton className="h-3 w-1/2" />
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -137,42 +143,29 @@ export function Documents() {
       ) : (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {filteredDocuments.map((doc) => (
-            <div
+            <a
               key={doc._id}
-              className="group relative flex flex-col rounded-lg border bg-card p-4 shadow-sm transition-all hover:shadow-md hover:border-primary/50"
+              href={doc.doc_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-4 rounded-lg border bg-card p-4 shadow-sm transition-all hover:shadow-md hover:border-primary/50"
             >
-              {/* Document Title */}
-              <h3 className="mb-2 text-base font-semibold line-clamp-2">
-                {doc.doc_title}
-              </h3>
+              {/* Document Icon */}
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
+                <FileText className="h-5 w-5 text-muted-foreground" />
+              </div>
 
-              {/* Document Description */}
-              {/* {doc.doc_discription && (
-                <p className="mb-3 text-sm text-muted-foreground line-clamp-2">
-                  {doc.doc_discription}
-                </p>
-              )} */}
-
-              {/* View Document Button */}
-              {doc.doc_link && (
-                <Button
-                  asChild
-                  variant="outline"
-                  className="mt-auto w-full"
-                  size="sm"
-                >
-                  <a
-                    href={doc.doc_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    View Document
-                  </a>
-                </Button>
-              )}
-            </div>
+              {/* Document Title and Link */}
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm font-medium line-clamp-1 group-hover:text-primary transition-colors">
+                  {doc.doc_title}
+                </h3>
+                <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <ExternalLink className="h-3 w-3" />
+                  <span>Open</span>
+                </div>
+              </div>
+            </a>
           ))}
         </div>
       )}
