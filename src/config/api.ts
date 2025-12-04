@@ -11,6 +11,28 @@ export const API_BASE_URL =
   console.log(API_BASE_URL);
 
 /**
+ * Get the API key from environment variables
+ */
+export const API_KEY = import.meta.env.VITE_API_KEY || "";
+
+/**
+ * Get Basic Auth credentials from environment variables
+ */
+export const API_USERNAME = import.meta.env.VITE_API_USERNAME || "";
+export const API_PASSWORD = import.meta.env.VITE_API_PASSWORD || "";
+
+/**
+ * Generate Basic Auth header value
+ */
+export const getBasicAuthHeader = (): string => {
+  if (!API_USERNAME || !API_PASSWORD) {
+    return "";
+  }
+  const credentials = `${API_USERNAME}:${API_PASSWORD}`;
+  return `Basic ${btoa(credentials)}`;
+};
+
+/**
  * API endpoints configuration
  */
 export const API_ENDPOINTS = {

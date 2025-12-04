@@ -4,6 +4,7 @@
  */
 
 import type { Document } from "@/types/document"
+import { API_KEY, getBasicAuthHeader } from "@/config/api"
 
 const DOCUMENTS_API_URL = "https://ecorsuexpressapp.vercel.app/docUpload"
 
@@ -21,11 +22,23 @@ export class DocumentsService {
     const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
 
     try {
+      // Build headers with X-API-Key and Basic Auth
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      }
+      
+      if (API_KEY && API_KEY.trim() !== "") {
+        headers["X-API-Key"] = API_KEY
+      }
+      
+      const basicAuth = getBasicAuthHeader()
+      if (basicAuth) {
+        headers["Authorization"] = basicAuth
+      }
+      
       const response = await fetch(DOCUMENTS_API_URL, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         signal: controller.signal,
       })
 

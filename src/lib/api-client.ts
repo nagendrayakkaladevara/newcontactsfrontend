@@ -3,7 +3,7 @@
  * Centralized HTTP client with error handling and request/response interceptors
  */
 
-import { API_BASE_URL } from "@/config/api"
+import { API_BASE_URL, API_KEY, getBasicAuthHeader } from "@/config/api"
 import type { ApiErrorResponse } from "@/types/contact"
 
 /**
@@ -45,10 +45,29 @@ class ApiClient {
   constructor(config: ApiClientConfig = {}) {
     this.baseURL = config.baseURL || API_BASE_URL
     this.timeout = config.timeout || 30000 // 30 seconds
-    this.defaultHeaders = {
+    
+    // Build headers object, ensuring no undefined values
+    const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      ...config.headers,
     }
+    
+    // Add X-API-Key header if API key is provided
+    if (API_KEY && API_KEY.trim() !== "") {
+      headers["X-API-Key"] = API_KEY
+    }
+    
+    // Add Basic Auth header if credentials are provided
+    const basicAuth = getBasicAuthHeader()
+    if (basicAuth) {
+      headers["Authorization"] = basicAuth
+    }
+    
+    // Merge any additional headers from config
+    if (config.headers) {
+      Object.assign(headers, config.headers)
+    }
+    
+    this.defaultHeaders = headers
   }
 
   /**
@@ -72,13 +91,16 @@ class ApiClient {
     const timeoutId = setTimeout(() => controller.abort(), this.timeout)
 
     try {
+      // Build headers object, ensuring proper merging
+      const headers: Record<string, string> = { ...this.defaultHeaders }
+      if (options.headers) {
+        Object.assign(headers, options.headers)
+      }
+      
       const response = await fetch(url, {
         ...options,
         signal: controller.signal,
-        headers: {
-          ...this.defaultHeaders,
-          ...options.headers,
-        },
+        headers,
       })
       clearTimeout(timeoutId)
       return response

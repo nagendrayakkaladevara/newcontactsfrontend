@@ -70,7 +70,7 @@ export function ContactActions({
             size="icon"
             variant={isCopied ? "default" : "secondary"}
             className={`h-8 w-8 transition-all ${
-              isCopied ? "bg-green-600 hover:bg-green-700" : ""
+              isCopied ? "bg-blue-600 hover:bg-blue-700" : ""
             }`}
             onClick={() => handleCopyPhone(phone)}
           >
@@ -89,8 +89,8 @@ export function ContactActions({
         <TooltipTrigger asChild>
           <Button
             size="sm"
-            variant="destructive"
-            className="h-8 cursor-pointer"
+            variant="default"
+            className="h-8 cursor-pointer bg-blue-600 hover:bg-blue-700"
             onClick={handleCall}
           >
             <Phone className="h-4 w-4" />

@@ -3,6 +3,9 @@ import { useContactsSearch } from "@/hooks/use-contacts-search"
 import { ContactsSearch } from "@/components/contacts/contacts-search"
 import { ContactsList } from "@/components/contacts/contacts-list"
 import { PaginationControls } from "@/components/contacts/pagination-controls"
+import { DocumentsList } from "@/components/documents/documents-list"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Phone, FileText } from "lucide-react"
 import logo from "@/assets/indian-railways-logo-Bn6xvMdg-removebg-preview.png"
 
 export function Home() {
@@ -82,35 +85,59 @@ export function Home() {
                 </div>
             </div>
 
-            {/* Search Section */}
-            <ContactsSearch onSearch={handleSearch} loading={loading} />
+            {/* Tabs Component */}
+            <Tabs defaultValue="contacts" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="contacts" className="flex items-center gap-2 border-gray-200 rounded-md">
+                        <Phone className="h-4 w-4" />
+                        Contacts
+                    </TabsTrigger>
+                    <TabsTrigger value="documents" className="flex items-center gap-2 border-gray-200 rounded-md">
+                        <FileText className="h-4 w-4" />
+                        Important Documents
+                    </TabsTrigger>
+                </TabsList>
 
-            {/* Search Results */}
-            {(hasSearched || loading || error || contacts.length > 0) && (
-                <div className="p-0.5 mt-4">
-                    <ContactsList
-                        contacts={contacts}
-                        loading={loading}
-                        error={error}
-                        hasSearched={hasSearched}
-                        onRetry={() => {
-                            if (lastQuery) {
-                                handleSearch(lastQuery, isPhoneSearch)
-                            }
-                        }}
-                    />
-                </div>
-            )}
-            {pagination && pagination.totalPages > 1 && (
-                <div className="border-t p-6">
-                    <PaginationControls
-                        page={pagination.page}
-                        totalPages={pagination.totalPages}
-                        onPageChange={handlePageChange}
-                        loading={loading}
-                    />
-                </div>
-            )}
+                {/* Contacts Tab */}
+                <TabsContent value="contacts" className="mt-6">
+                    <div className="flex flex-col gap-6">
+                        {/* Search Section */}
+                        <ContactsSearch onSearch={handleSearch} loading={loading} />
+
+                        {/* Search Results */}
+                        {(hasSearched || loading || error || contacts.length > 0) && (
+                            <div className="p-0.5 mt-4">
+                                <ContactsList
+                                    contacts={contacts}
+                                    loading={loading}
+                                    error={error}
+                                    hasSearched={hasSearched}
+                                    onRetry={() => {
+                                        if (lastQuery) {
+                                            handleSearch(lastQuery, isPhoneSearch)
+                                        }
+                                    }}
+                                />
+                            </div>
+                        )}
+                        {pagination && pagination.totalPages > 1 && (
+                            <div className="border-t p-6">
+                                <PaginationControls
+                                    page={pagination.page}
+                                    totalPages={pagination.totalPages}
+                                    onPageChange={handlePageChange}
+                                    loading={loading}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </TabsContent>
+
+                {/* Documents Tab */}
+                <TabsContent value="documents" className="mt-6">
+                    <DocumentsList />
+                </TabsContent>
+            </Tabs>
         </div>
     )
 }
