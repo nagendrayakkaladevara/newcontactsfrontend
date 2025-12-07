@@ -97,7 +97,7 @@ export function ContactsSearch({ onSearch, loading }: ContactsSearchProps) {
           onSearchRef.current(trimmedQuery, isPhoneSearch)
         }
       }
-    }, 500) // 500ms debounce delay
+    }, 2000) // 2000ms debounce delay
 
     return () => {
       clearTimeout(timer)

@@ -103,7 +103,7 @@ export function DocumentsList() {
           placeholder="Search documents by title..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9"
+          className="pl-9 pr-9 border-foreground/90 dark:border-foreground/90"
         />
         {searchQuery && (
           <Button
