@@ -4,9 +4,7 @@
  */
 
 import type { Document } from "@/types/document"
-import { API_KEY, getBasicAuthHeader } from "@/config/api"
-
-const DOCUMENTS_API_URL = "https://ecorsuexpressapp.vercel.app/docUpload"
+import { API_BASE_URL, API_KEY, API_ENDPOINTS, getBasicAuthHeader } from "@/config/api"
 
 /**
  * Documents Service Class
@@ -14,8 +12,7 @@ const DOCUMENTS_API_URL = "https://ecorsuexpressapp.vercel.app/docUpload"
  */
 export class DocumentsService {
   /**
-   * Get all documents
-   * Filters documents that contain "WAT" in doc_title
+   * Get all documents (no pagination)
    */
   async getDocuments(): Promise<Document[]> {
     const controller = new AbortController()
@@ -36,7 +33,8 @@ export class DocumentsService {
         headers["Authorization"] = basicAuth
       }
       
-      const response = await fetch(DOCUMENTS_API_URL, {
+      const url = `${API_BASE_URL}${API_ENDPOINTS.documents.getAll}`
+      const response = await fetch(url, {
         method: "GET",
         headers,
         signal: controller.signal,
@@ -48,33 +46,102 @@ export class DocumentsService {
         throw new Error(`Failed to fetch documents: ${response.statusText}`)
       }
 
-      const data = await response.json()
+      const responseData = await response.json()
 
-      // Validate and filter documents containing "WAT" in doc_title
-      const filtered = (Array.isArray(data) ? data : [])
-        .filter(
-          (doc: any) =>
-            doc &&
-            doc.doc_title &&
-            typeof doc.doc_title === "string" &&
-            doc.doc_title.includes("WAT")
-        )
+      // Handle wrapped response format: { success: true, data: [...], count: number }
+      if (responseData && typeof responseData === "object" && "data" in responseData) {
+        const documents = (Array.isArray(responseData.data) ? responseData.data : [])
+          .map((doc: any) => ({
+            id: doc.id || "",
+            title: doc.title || "",
+            link: doc.link || "",
+            uploadedBy: doc.uploadedBy || "",
+            createdAt: doc.createdAt || "",
+            updatedAt: doc.updatedAt || "",
+          }))
+        return documents
+      }
+
+      // Fallback: handle direct array response
+      const documents = (Array.isArray(responseData) ? responseData : [])
         .map((doc: any) => ({
-          _id: doc._id || "",
-          doc_title: doc.doc_title || "",
-          doc_discription: doc.doc_discription || "",
-          doc_link: doc.doc_link || "",
-          doc_uploaded_by: doc.doc_uploaded_by || "",
+          id: doc.id || "",
+          title: doc.title || "",
+          link: doc.link || "",
+          uploadedBy: doc.uploadedBy || "",
           createdAt: doc.createdAt || "",
           updatedAt: doc.updatedAt || "",
-          __v: doc.__v || 0,
         }))
 
-      return filtered
+      return documents
     } catch (error) {
       clearTimeout(timeoutId)
       if (error instanceof Error && error.name === "AbortError") {
         throw new Error("Request timeout: Could not fetch documents")
+      }
+      throw error
+    }
+  }
+
+  /**
+   * Get total count of documents
+   */
+  async getDocumentsCount(): Promise<number> {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+
+    try {
+      // Build headers with X-API-Key and Basic Auth
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      }
+      
+      if (API_KEY && API_KEY.trim() !== "") {
+        headers["X-API-Key"] = API_KEY
+      }
+      
+      const basicAuth = getBasicAuthHeader()
+      if (basicAuth) {
+        headers["Authorization"] = basicAuth
+      }
+      
+      const url = `${API_BASE_URL}${API_ENDPOINTS.documents.count}`
+      const response = await fetch(url, {
+        method: "GET",
+        headers,
+        signal: controller.signal,
+      })
+
+      clearTimeout(timeoutId)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch documents count: ${response.statusText}`)
+      }
+
+      const responseData = await response.json()
+      
+      // Handle wrapped response format: { success: true, count: number }
+      if (responseData && typeof responseData === "object" && "count" in responseData) {
+        if (typeof responseData.count === "number") {
+          return responseData.count
+        }
+      }
+      
+      // Fallback: handle direct number response
+      if (typeof responseData === "number") {
+        return responseData
+      }
+      
+      // Fallback: handle alternative field names
+      if (responseData && typeof responseData.total === "number") {
+        return responseData.total
+      }
+      
+      throw new Error("Invalid response format for documents count")
+    } catch (error) {
+      clearTimeout(timeoutId)
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new Error("Request timeout: Could not fetch documents count")
       }
       throw error
     }

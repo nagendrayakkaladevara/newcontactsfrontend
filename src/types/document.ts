@@ -3,13 +3,11 @@
  */
 
 export interface Document {
-  _id: string
-  doc_title: string
-  doc_discription: string
-  doc_link: string
-  doc_uploaded_by: string
+  id: string
+  title: string
+  link: string
+  uploadedBy: string
   createdAt: string
   updatedAt: string
-  __v: number
 }
 

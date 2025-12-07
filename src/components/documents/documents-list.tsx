@@ -45,7 +45,7 @@ export function DocumentsList() {
 
     const query = searchQuery.toLowerCase().trim()
     const filtered = documents.filter((doc) =>
-      doc.doc_title.toLowerCase().includes(query)
+      doc.title.toLowerCase().includes(query)
     )
     setFilteredDocuments(filtered)
   }, [searchQuery, documents])
@@ -134,8 +134,8 @@ export function DocumentsList() {
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {filteredDocuments.map((doc) => (
             <a
-              key={doc._id}
-              href={doc.doc_link}
+              key={doc.id}
+              href={doc.link}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center gap-4 rounded-lg border bg-card p-4 shadow-sm transition-all hover:shadow-md hover:border-primary/50"
@@ -148,7 +148,7 @@ export function DocumentsList() {
               {/* Document Title and Link */}
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-medium line-clamp-1 group-hover:text-primary transition-colors">
-                  {doc.doc_title}
+                  {doc.title}
                 </h3>
                 <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                   <ExternalLink className="h-3 w-3" />

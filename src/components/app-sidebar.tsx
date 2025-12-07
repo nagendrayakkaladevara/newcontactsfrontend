@@ -1,8 +1,7 @@
 import * as React from "react"
 import { Link, useLocation } from "react-router-dom"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, Users } from "lucide-react"
 
-import { VersionSwitcher } from "@/components/version-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -21,7 +20,6 @@ import { ThemeToggle } from "@/components/theme-toggle"
 
 // Navigation data for Contacts App
 const data = {
-  versions: ["1.0.0", "1.1.0-beta", "2.0.0-alpha"],
   navMain: [
     {
       title: "Menu",
@@ -62,10 +60,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <VersionSwitcher
-          versions={data.versions}
-          defaultVersion={data.versions[0]}
-        />
+        <div className="flex items-center gap-3 px-2 py-4">
+          <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-10 items-center justify-center rounded-lg">
+            <Users className="size-5" />
+          </div>
+          <div className="flex flex-col gap-0.5 leading-none">
+            <span className="font-semibold text-lg">Contacts App</span>
+            <span className="text-xs text-muted-foreground">Manage your contacts</span>
+          </div>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         {/* We create a SidebarGroup for each parent. */}

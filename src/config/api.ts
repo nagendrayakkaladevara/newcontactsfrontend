@@ -120,6 +120,10 @@ export const API_ENDPOINTS = {
     growth: (days: number = 30) => `/api/analytics/growth?days=${days}`,
     recent: (limit: number = 10) => `/api/analytics/recent?limit=${limit}`,
   },
+  documents: {
+    getAll: "/api/documents/all",
+    count: "/api/documents/count",
+  },
 } as const
 
 /**
