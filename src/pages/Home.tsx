@@ -86,6 +86,7 @@ export function Home() {
                 />
                 <div className="flex flex-col gap-2 text-center">
                     <h1 className="text-xl font-bold tracking-tight">East Coast Railway, Waltair Division.</h1>
+                    <p className="text-sm text-gray-500">Contacts - Running staff, Stations, Hotels, etc.</p>
                 </div>
             </div>
 

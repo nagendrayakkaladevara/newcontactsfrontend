@@ -97,30 +97,30 @@ const techStack = [
 
 export function About() {
   return (
-    <div className="flex flex-col gap-12 max-w-7xl mx-auto px-4 pb-12">
+    <div className="flex flex-col gap-6 md:gap-12 max-w-7xl mx-auto px-3 md:px-4 pb-8 md:pb-12">
       {/* Hero Section - Enhanced */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-600 via-purple-600 to-pink-600 p-8 md:p-16 text-white shadow-2xl">
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-600 via-purple-600 to-pink-600 p-6 md:p-8 lg:p-16 text-white shadow-2xl">
         {/* Animated background elements */}
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-0 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-blue-400/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-64 md:w-96 h-64 md:h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
         
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-md border border-white/30 shadow-lg">
-              <Sparkles className="h-6 w-6 animate-pulse" />
+          <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-4 md:mb-6">
+            <div className="p-2 md:p-3 bg-white/20 rounded-lg md:rounded-xl backdrop-blur-md border border-white/30 shadow-lg">
+              <Sparkles className="h-4 w-4 md:h-6 md:w-6 animate-pulse" />
             </div>
-            <span className="px-4 py-2 bg-white/20 text-white border border-white/30 rounded-full text-sm font-semibold backdrop-blur-md shadow-lg">
+            <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 text-white border border-white/30 rounded-full text-xs md:text-sm font-semibold backdrop-blur-md shadow-lg">
               About Application
             </span>
-            <div className="flex gap-1">
+            <div className="flex gap-0.5 md:gap-1">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="h-4 w-4 text-yellow-300 fill-yellow-300" />
+                <Star key={i} className="h-3 w-3 md:h-4 md:w-4 text-yellow-300 fill-yellow-300" />
               ))}
             </div>
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-extrabold mb-4 md:mb-6 leading-tight">
             <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
               East Coast Railway
             </span>
@@ -134,20 +134,20 @@ export function About() {
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-blue-100 max-w-3xl leading-relaxed mb-8">
+          <p className="text-sm sm:text-base md:text-xl lg:text-2xl text-blue-100 max-w-3xl leading-relaxed mb-6 md:mb-8">
             A comprehensive, modern solution for managing contacts, documents, and analytics 
             for the <span className="font-semibold text-white">East Coast Railway, Waltair Division</span>. 
             Built with cutting-edge technology to provide seamless user experience.
           </p>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full backdrop-blur-md border border-white/30">
-              <Rocket className="h-5 w-5" />
-              <span className="font-medium">Modern Technology</span>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-4">
+            <div className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-white/20 rounded-full backdrop-blur-md border border-white/30">
+              <Rocket className="h-4 w-4 md:h-5 md:w-5" />
+              <span className="text-xs md:text-base font-medium">Modern Technology</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full backdrop-blur-md border border-white/30">
-              <Code className="h-5 w-5" />
-              <span className="font-medium">Open Source</span>
+            <div className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-white/20 rounded-full backdrop-blur-md border border-white/30">
+              <Code className="h-4 w-4 md:h-5 md:w-5" />
+              <span className="text-xs md:text-base font-medium">Open Source</span>
             </div>
           </div>
         </div>
@@ -155,26 +155,26 @@ export function About() {
 
       {/* Key Highlights - Redesigned */}
       <div>
-        <div className="mb-6">
-          <h2 className="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
+        <div className="mb-4 md:mb-6">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-3 bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
             Why Choose Us?
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-sm md:text-base lg:text-lg">
             Experience the power of modern contact management
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           {highlights.map((highlight, index) => (
             <div
               key={index}
-              className="group relative overflow-hidden p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+              className="group relative overflow-hidden p-4 md:p-6 rounded-xl md:rounded-2xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl" />
-              <div className="relative flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <div className="absolute top-0 right-0 w-24 md:w-32 h-24 md:h-32 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl" />
+              <div className="relative flex items-center gap-3 md:gap-4">
+                <div className="p-2 md:p-3 rounded-lg md:rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
                   {highlight.icon}
                 </div>
-                <span className="text-base font-semibold text-gray-900 dark:text-white">{highlight.text}</span>
+                <span className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">{highlight.text}</span>
               </div>
             </div>
           ))}
@@ -183,36 +183,36 @@ export function About() {
 
       {/* Features Grid - Enhanced */}
       <div>
-        <div className="mb-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <div className="mb-6 md:mb-8 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-3 md:mb-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
             Key Features
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
             Discover the powerful features that make this application essential for contact management
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="group relative overflow-hidden p-8 rounded-3xl border-2 border-gray-200 dark:border-gray-700 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 hover:shadow-2xl hover:border-transparent transition-all duration-500 hover:-translate-y-2"
+              className="group relative overflow-hidden p-5 md:p-6 lg:p-8 rounded-2xl md:rounded-3xl border-2 border-gray-200 dark:border-gray-700 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 hover:shadow-2xl hover:border-transparent transition-all duration-500 hover:-translate-y-2"
             >
               {/* Background gradient on hover */}
               <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
               
               {/* Decorative elements */}
-              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-3xl group-hover:blur-2xl transition-all duration-500" />
+              <div className="absolute top-0 right-0 w-32 md:w-40 h-32 md:h-40 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-3xl group-hover:blur-2xl transition-all duration-500" />
               
               <div className="relative z-10">
                 {/* Icon with gradient background */}
-                <div className={`mb-6 p-4 rounded-2xl bg-gradient-to-br ${feature.gradient} text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 w-fit`}>
+                <div className={`mb-4 md:mb-6 p-3 md:p-4 rounded-xl md:rounded-2xl bg-gradient-to-br ${feature.gradient} text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 w-fit`}>
                   {feature.icon}
                 </div>
                 
-                <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text transition-all duration-300">
+                <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3 text-gray-900 dark:text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text transition-all duration-300">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-300">
+                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-300">
                   {feature.description}
                 </p>
               </div>
@@ -222,30 +222,30 @@ export function About() {
       </div>
 
       {/* Technology Stack - Enhanced */}
-      <div className="relative overflow-hidden rounded-3xl border-2 border-gray-200 dark:border-gray-700 bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 p-8 md:p-12 shadow-xl">
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl border-2 border-gray-200 dark:border-gray-700 bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 p-6 md:p-8 lg:p-12 shadow-xl">
         {/* Background decoration */}
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-64 md:w-96 h-64 md:h-96 bg-blue-400/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-purple-400/10 rounded-full blur-3xl" />
         
         <div className="relative z-10">
-          <div className="mb-8 text-center">
-            <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-lg mb-4">
-              <Globe className="h-8 w-8" />
+          <div className="mb-6 md:mb-8 text-center">
+            <div className="inline-flex items-center justify-center p-3 md:p-4 rounded-xl md:rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-lg mb-3 md:mb-4">
+              <Globe className="h-6 w-6 md:h-8 md:w-8" />
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-2 md:mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Built with Modern Technology
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-sm md:text-base lg:text-lg text-muted-foreground px-2">
               Leveraging the latest web technologies for optimal performance and user experience
             </p>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-2 md:gap-3 lg:gap-4">
             {techStack.map((tech, index) => (
               <span
                 key={index}
-                className={`px-6 py-3 text-sm font-semibold rounded-full border-2 ${tech.color} backdrop-blur-sm shadow-md hover:scale-110 hover:shadow-lg transition-all duration-300`}
+                className={`px-4 md:px-5 lg:px-6 py-2 md:py-2.5 lg:py-3 text-xs md:text-sm font-semibold rounded-full border-2 ${tech.color} backdrop-blur-sm shadow-md hover:scale-110 hover:shadow-lg transition-all duration-300`}
               >
                 {tech.name}
               </span>
@@ -255,31 +255,31 @@ export function About() {
       </div>
 
       {/* Footer Note - Enhanced */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-8 md:p-12 text-white shadow-2xl border-2 border-gray-700">
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-6 md:p-8 lg:p-12 text-white shadow-2xl border-2 border-gray-700">
         {/* Animated background */}
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-0 left-1/4 w-48 md:w-64 h-48 md:h-64 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-48 md:w-64 h-48 md:h-64 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
         
         <div className="relative z-10 text-center">
-          <div className="mb-6">
-            <div className="inline-flex items-center justify-center p-3 rounded-full bg-gradient-to-br from-red-500 to-pink-500 mb-4 shadow-lg">
-              <HeartPulse className="h-6 w-6 text-white" />
+          <div className="mb-4 md:mb-6">
+            <div className="inline-flex items-center justify-center p-2.5 md:p-3 rounded-full bg-gradient-to-br from-red-500 to-pink-500 mb-3 md:mb-4 shadow-lg">
+              <HeartPulse className="h-5 w-5 md:h-6 md:w-6 text-white" />
             </div>
-            <p className="text-lg md:text-xl mb-2">
+            <p className="text-base md:text-lg lg:text-xl mb-2 px-2">
               Developed with <span className="text-red-400 animate-pulse">❤️</span> by{" "}
-              <span className="font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent text-2xl">
+              <span className="font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent text-xl md:text-2xl">
                 Nagendra Yakkaladevara
               </span>
             </p>
-            <p className="text-sm md:text-base text-gray-300 mt-4">
+            <p className="text-xs md:text-sm lg:text-base text-gray-300 mt-3 md:mt-4 px-2">
               For <span className="font-semibold text-white">East Coast Railway, Waltair Division</span>
             </p>
           </div>
           
-          <div className="flex items-center justify-center gap-2 mt-6">
+          <div className="flex items-center justify-center gap-2 mt-4 md:mt-6">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
-            <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+            <Star className="h-4 w-4 md:h-5 md:w-5 text-yellow-400 fill-yellow-400" />
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
           </div>
         </div>
