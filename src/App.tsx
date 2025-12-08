@@ -19,6 +19,7 @@ import { Analytics } from "@/pages/Analytics"
 import { Categories } from "@/pages/Categories"
 import { Documents } from "@/pages/Documents"
 import { BloodGroups } from "@/pages/BloodGroups"
+import { About } from "@/pages/About"
 import { Link } from "react-router-dom"
 import { analyticsService } from "@/services/analytics.service"
 
@@ -71,6 +72,12 @@ function AppHeader() {
       breadcrumbs.push({
         label: "Blood Groups",
         path: "/blood-groups",
+        isActive: true,
+      })
+    } else if (path === "/about") {
+      breadcrumbs.push({
+        label: "About App",
+        path: "/about",
         isActive: true,
       })
     }
@@ -132,6 +139,7 @@ function App() {
               <Route path="/documents" element={<Documents />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/blood-groups" element={<BloodGroups />} />
+              <Route path="/about" element={<About />} />
             </Routes>
         </div>
       </SidebarInset>

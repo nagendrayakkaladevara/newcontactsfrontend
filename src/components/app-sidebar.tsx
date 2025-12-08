@@ -41,6 +41,10 @@ const data = {
           title: "Analytics",
           url: "/analytics",
         },
+        {
+          title: "About App",
+          url: "/about",
+        },
       ],
     },
   ],

@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from "react"
 import { useContactsSearch } from "@/hooks/use-contacts-search"
+import { useVisitCount } from "@/hooks/use-visit-count"
 import { ContactsSearch } from "@/components/contacts/contacts-search"
 import { ContactsList } from "@/components/contacts/contacts-list"
 import { PaginationControls } from "@/components/contacts/pagination-controls"
@@ -21,6 +22,9 @@ export function Home() {
         searchByPhone,
         clearResults,
     } = useContactsSearch()
+    
+    // Get visit count (don't auto-increment since App.tsx already handles it)
+    const { visitCount } = useVisitCount(false, true)
     
     // Track if a search is in progress to prevent race conditions
     const isSearchingRef = useRef(false)
@@ -72,7 +76,7 @@ export function Home() {
     }
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 pb-16 md:pb-0">
             {/* Welcome Section with Logo */}
             <div className="flex flex-col items-center gap-4 my-4">
                 <img 
@@ -138,6 +142,16 @@ export function Home() {
                     <DocumentsList />
                 </TabsContent>
             </Tabs>
+
+            {/* Developer Credit - Mobile Only - Fixed at bottom of screen */}
+            <div className="block md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 px-4 z-10">
+                <p className="text-xs text-center text-gray-500">
+                    Developer by Nagendra Yakkaladevara |
+                    {visitCount !== null && (
+                        <span className="font-bold ml-2">Usage count : {visitCount.toLocaleString()}</span>
+                    )}
+                </p>
+            </div>
         </div>
     )
 }

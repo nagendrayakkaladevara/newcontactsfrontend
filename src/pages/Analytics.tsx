@@ -135,13 +135,13 @@ export function Analytics() {
             color="purple"
           />
           <StatCard
-            title="Recent visits (7 Days)"
+            title="Contacts added in past 7 Days"
             value={overview.recentContacts7Days}
             icon={Calendar}
             color="green"
           />
           <StatCard
-            title="Recent visits (30 Days)"
+            title="Contacts added in past 30 Days"
             value={overview.recentContacts30Days}
             icon={TrendingUp}
             color="orange"
