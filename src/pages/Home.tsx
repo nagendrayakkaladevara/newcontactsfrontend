@@ -149,7 +149,7 @@ export function Home() {
                 <p className="text-xs text-center text-gray-500">
                     Developed by Nagendra Yakkaladevara |
                     {visitCount !== null && (
-                        <span className="font-bold ml-2">Usage count : {visitCount.toLocaleString()}</span>
+                        <span className="font-bold ml-1">Usage count : {visitCount.toLocaleString()}</span>
                     )}
                 </p>
             </div>
