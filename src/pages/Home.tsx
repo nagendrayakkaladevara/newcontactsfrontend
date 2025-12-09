@@ -147,7 +147,7 @@ export function Home() {
             {/* Developer Credit - Mobile Only - Fixed at bottom of screen */}
             <div className="block md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 px-4 z-10">
                 <p className="text-xs text-center text-gray-500">
-                    Developer by Nagendra Yakkaladevara |
+                    Developed by Nagendra Yakkaladevara |
                     {visitCount !== null && (
                         <span className="font-bold ml-2">Usage count : {visitCount.toLocaleString()}</span>
                     )}
