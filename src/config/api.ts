@@ -48,7 +48,7 @@ export const API_ENDPOINTS = {
     searchByName: (query: string, page: number = 1, limit: number = 50) =>
       `/api/contacts/search/name?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`,
     searchByPhone: (phone: string) =>
-      `/api/contacts/search/phone?phone=${encodeURIComponent(phone)}`,
+      `/api/contacts/search/phone?query=${encodeURIComponent(phone)}`,
     getBloodGroups: "/api/contacts/blood-groups",
     getByBloodGroup: (
       bloodGroups: string[] = [],

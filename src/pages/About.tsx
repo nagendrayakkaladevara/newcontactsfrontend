@@ -134,10 +134,14 @@ export function About() {
             </span>
           </h1>
           
-          <p className="text-sm sm:text-base md:text-xl lg:text-2xl text-blue-100 max-w-3xl leading-relaxed mb-6 md:mb-8">
+          <p className="text-sm sm:text-base md:text-xl lg:text-2xl text-blue-100 max-w-3xl leading-relaxed mb-4 md:mb-6">
             A comprehensive, modern solution for managing contacts, documents, and analytics 
             for the <span className="font-semibold text-white">East Coast Railway, Waltair Division</span>. 
             Built with cutting-edge technology to provide seamless user experience.
+          </p>
+
+          <p className="text-xs sm:text-sm md:text-base lg:text-lg text-blue-100 max-w-3xl leading-relaxed mb-6 md:mb-8 italic">
+            Thank you, Y. S. Prabhu Garu, for providing all the necessary data and for your constant support throughout the development of the application. <br />_ Nagendra Yakkaladevara
           </p>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-4">

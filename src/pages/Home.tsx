@@ -75,6 +75,33 @@ export function Home() {
         }
     }
 
+    const handleRetry = useCallback(async () => {
+        if (!lastQuery) {
+            return
+        }
+
+        // Prevent concurrent searches
+        if (isSearchingRef.current) {
+            return
+        }
+
+        try {
+            isSearchingRef.current = true
+            // Directly call the search functions without going through handleSearch
+            // This bypasses the duplicate check that prevents retries
+            if (isPhoneSearch) {
+                await searchByPhone(lastQuery)
+            } else {
+                await searchByName(lastQuery, 1)
+            }
+        } catch (err) {
+            // Error is handled by the hook
+            console.error("Retry error:", err)
+        } finally {
+            isSearchingRef.current = false
+        }
+    }, [lastQuery, isPhoneSearch, searchByName, searchByPhone])
+
     return (
         <div className="flex flex-col gap-6 pb-16 md:pb-0">
             {/* Welcome Section with Logo */}
@@ -117,11 +144,7 @@ export function Home() {
                                     loading={loading}
                                     error={error}
                                     hasSearched={hasSearched}
-                                    onRetry={() => {
-                                        if (lastQuery) {
-                                            handleSearch(lastQuery, isPhoneSearch)
-                                        }
-                                    }}
+                                    onRetry={handleRetry}
                                 />
                             </div>
                         )}

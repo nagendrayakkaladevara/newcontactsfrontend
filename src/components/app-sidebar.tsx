@@ -70,7 +70,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </div>
           <div className="flex flex-col gap-0.5 leading-none">
             <span className="font-semibold text-lg">Contacts App</span>
-            <span className="text-xs text-muted-foreground">Manage your contacts</span>
+            <span className="text-xs text-muted-foreground">Manage contacts</span>
           </div>
         </div>
       </SidebarHeader>
