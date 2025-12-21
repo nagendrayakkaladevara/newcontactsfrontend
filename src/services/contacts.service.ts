@@ -92,9 +92,45 @@ export class ContactsService {
    * Search contact by phone number
    * @param phone - Phone number to search
    */
-  async searchByPhone(phone: string): Promise<Contact> {
+  async searchByPhone(phone: string): Promise<PaginatedContactsResponse> {
     const endpoint = API_ENDPOINTS.contacts.searchByPhone(phone)
-    return apiClient.get<Contact>(endpoint)
+    const response = await apiClient.get<any>(endpoint)
+    
+    // Handle API response format that might have 'count' instead of 'pagination'
+    if (response && 'count' in response && !('pagination' in response)) {
+      const count = response.count || 0
+      const data = response.data || []
+      const limit = response.limit || 50 // Use limit from response if available, default to 50
+      const page = response.page || 1 // Use page from response if available, default to 1
+      
+      return {
+        success: response.success !== false,
+        data: data,
+        pagination: {
+          page: page,
+          limit: limit,
+          total: count,
+          totalPages: Math.ceil(count / limit),
+        }
+      }
+    }
+    
+    // If response already has pagination, return as is
+    if (response && 'pagination' in response) {
+      return response as PaginatedContactsResponse
+    }
+    
+    // Fallback: transform to expected format
+    return {
+      success: response?.success !== false,
+      data: response?.data || [],
+      pagination: {
+        page: 1,
+        limit: 50,
+        total: response?.data?.length || 0,
+        totalPages: 1,
+      }
+    }
   }
 
   /**

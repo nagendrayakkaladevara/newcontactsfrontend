@@ -111,17 +111,16 @@ export function useContactsSearch(): UseContactsSearchReturn {
       // Validate input with Zod
       const validated = phoneSearchSchema.parse({ phone })
       
-      const contact: Contact = await contactsService.searchByPhone(validated.phone)
+      const response: PaginatedContactsResponse = await contactsService.searchByPhone(validated.phone)
 
       // Only update state if this is still the latest request (handle race conditions)
       if (currentRequestId === searchRequestIdRef.current) {
-        // Convert single contact to array format for consistent display
-        setContacts([contact])
+        setContacts(response.data)
         setPagination({
-          page: 1,
-          limit: 1,
-          total: 1,
-          totalPages: 1,
+          page: response.pagination.page,
+          limit: response.pagination.limit,
+          total: response.pagination.total,
+          totalPages: response.pagination.totalPages,
         })
       }
     } catch (err) {

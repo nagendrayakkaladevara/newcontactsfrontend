@@ -8,12 +8,8 @@ import {
   Building2,
   Zap,
   Globe,
-  CheckCircle2,
   Sparkles,
-  Star,
-  ArrowRight,
-  Code,
-  Rocket
+  Star
 } from "lucide-react"
 
 const features = [
@@ -75,15 +71,6 @@ const features = [
   }
 ]
 
-const highlights = [
-  { text: "Real-time contact search", icon: <Zap className="h-4 w-4" /> },
-  { text: "Mobile-responsive design", icon: <Globe className="h-4 w-4" /> },
-  { text: "Secure and reliable", icon: <CheckCircle2 className="h-4 w-4" /> },
-  { text: "Easy navigation", icon: <ArrowRight className="h-4 w-4" /> },
-  { text: "Comprehensive analytics", icon: <BarChart3 className="h-4 w-4" /> },
-  { text: "Emergency contact access", icon: <HeartPulse className="h-4 w-4" /> }
-]
-
 const techStack = [
   { name: "React", color: "bg-blue-500/10 text-blue-600 border-blue-200 dark:text-blue-400 dark:border-blue-800" },
   { name: "TypeScript", color: "bg-indigo-500/10 text-indigo-600 border-indigo-200 dark:text-indigo-400 dark:border-indigo-800" },
@@ -143,45 +130,6 @@ export function About() {
           <p className="text-xs sm:text-sm md:text-base lg:text-lg text-blue-100 max-w-3xl leading-relaxed mb-6 md:mb-8 italic">
             Thank you, Y. S. Prabhu Garu, for providing all the necessary data and for your constant support throughout the development of the application. <br />_ Nagendra Yakkaladevara
           </p>
-
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-4">
-            <div className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-white/20 rounded-full backdrop-blur-md border border-white/30">
-              <Rocket className="h-4 w-4 md:h-5 md:w-5" />
-              <span className="text-xs md:text-base font-medium">Modern Technology</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-white/20 rounded-full backdrop-blur-md border border-white/30">
-              <Code className="h-4 w-4 md:h-5 md:w-5" />
-              <span className="text-xs md:text-base font-medium">Open Source</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Key Highlights - Redesigned */}
-      <div>
-        <div className="mb-4 md:mb-6">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-3 bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
-            Why Choose Us?
-          </h2>
-          <p className="text-muted-foreground text-sm md:text-base lg:text-lg">
-            Experience the power of modern contact management
-          </p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-          {highlights.map((highlight, index) => (
-            <div
-              key={index}
-              className="group relative overflow-hidden p-4 md:p-6 rounded-xl md:rounded-2xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-            >
-              <div className="absolute top-0 right-0 w-24 md:w-32 h-24 md:h-32 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl" />
-              <div className="relative flex items-center gap-3 md:gap-4">
-                <div className="p-2 md:p-3 rounded-lg md:rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                  {highlight.icon}
-                </div>
-                <span className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">{highlight.text}</span>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
 
@@ -258,33 +206,40 @@ export function About() {
         </div>
       </div>
 
-      {/* Footer Note - Enhanced */}
-      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-6 md:p-8 lg:p-12 text-white shadow-2xl border-2 border-gray-700">
-        {/* Animated background */}
-        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
-        <div className="absolute top-0 left-1/4 w-48 md:w-64 h-48 md:h-64 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-48 md:w-64 h-48 md:h-64 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+      {/* Footer Note - Redesigned */}
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-8 md:p-10 lg:p-14 text-white shadow-2xl border border-slate-700/50">
+        {/* Clean subtle background */}
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:40px_40px]" />
+        </div>
+        {/* Beautiful gradient blur effects */}
+        <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-gradient-to-br from-cyan-500/10 to-blue-500/15 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/3 left-1/4 w-[350px] h-[350px] bg-gradient-to-br from-purple-500/10 to-pink-500/15 rounded-full blur-3xl" />
         
-        <div className="relative z-10 text-center">
-          <div className="mb-4 md:mb-6">
-            <div className="inline-flex items-center justify-center p-2.5 md:p-3 rounded-full bg-gradient-to-br from-red-500 to-pink-500 mb-3 md:mb-4 shadow-lg">
-              <HeartPulse className="h-5 w-5 md:h-6 md:w-6 text-white" />
-            </div>
-            <p className="text-base md:text-lg lg:text-xl mb-2 px-2">
-              Developed with <span className="text-red-400 animate-pulse">❤️</span> by{" "}
-              <span className="font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent text-xl md:text-2xl">
+        <div className="relative z-10">
+          <div className="flex flex-col items-center justify-center text-center space-y-6 md:space-y-7">
+            {/* Developer Section */}
+            <div className="space-y-3">
+              <p className="text-xs md:text-sm text-slate-400 font-medium tracking-[0.15em] uppercase">
+                Developed with ❤️ by
+              </p>
+              <h3 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white tracking-tight">
                 Nagendra Yakkaladevara
-              </span>
-            </p>
-            <p className="text-xs md:text-sm lg:text-base text-gray-300 mt-3 md:mt-4 px-2">
-              For <span className="font-semibold text-white">East Coast Railway, Waltair Division</span>
-            </p>
-          </div>
-          
-          <div className="flex items-center justify-center gap-2 mt-4 md:mt-6">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
-            <Star className="h-4 w-4 md:h-5 md:w-5 text-yellow-400 fill-yellow-400" />
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
+              </h3>
+            </div>
+
+            {/* Clean Divider */}
+            <div className="w-16 md:w-24 h-px bg-slate-700/60" />
+
+            {/* Organization Section */}
+            <div className="space-y-1.5">
+              <p className="text-xs md:text-sm text-slate-500 font-normal">
+                For
+              </p>
+              <p className="text-base md:text-lg lg:text-xl font-medium text-slate-200 leading-relaxed">
+                East Coast Railway, Waltair Division
+              </p>
+            </div>
           </div>
         </div>
       </div>
