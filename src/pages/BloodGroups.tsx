@@ -17,6 +17,7 @@ export function BloodGroups() {
   const [contactsError, setContactsError] = React.useState<string | null>(null)
   const [pagination, setPagination] = React.useState<PaginationMeta | null>(null)
   const [contactsPage, setContactsPage] = React.useState(1)
+  const contactsListRef = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
     const fetchBloodGroups = async () => {
@@ -75,6 +76,13 @@ export function BloodGroups() {
     setContactsPage(1)
   }, [selectedGroups])
 
+  // Scroll to top of contacts list when page changes
+  React.useEffect(() => {
+    if (contactsPage && contactsListRef.current) {
+      contactsListRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [contactsPage])
+
   return (
     <div className="space-y-6">
       <div>
@@ -112,7 +120,7 @@ export function BloodGroups() {
 
       {/* Contacts Table */}
       {selectedGroups.length > 0 && (
-        <div className="rounded-lg border bg-card shadow-sm">
+        <div className="rounded-lg border bg-card shadow-sm" ref={contactsListRef}>
           <div className="border-b p-6">
             <h2 className="text-xl font-semibold">Contacts</h2>
             {pagination && (

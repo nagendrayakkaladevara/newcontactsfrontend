@@ -507,7 +507,7 @@ function GrowthChart({ data, days, loading = false, onDaysChange }: GrowthChartP
 
   return (
     <div className="rounded-lg border bg-card p-6 shadow-sm">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 space-y-4">
         <div className="flex items-center gap-3">
           <div className="rounded-full bg-green-500/10 p-2">
             <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
@@ -517,7 +517,7 @@ function GrowthChart({ data, days, loading = false, onDaysChange }: GrowthChartP
             <p className="text-sm text-muted-foreground">{loading ? "Loading..." : data?.period || ""}</p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-end">
           {[7, 30, 90, 365].map((d) => (
             <button
               key={d}

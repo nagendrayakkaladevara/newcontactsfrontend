@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { useContactsSearch } from "@/hooks/use-contacts-search"
 import { useVisitCount } from "@/hooks/use-visit-count"
 import { ContactsSearch } from "@/components/contacts/contacts-search"
@@ -75,6 +75,20 @@ export function Home() {
         }
     }
 
+    // Scroll to top when page changes
+    useEffect(() => {
+        if (pagination && pagination.page) {
+            // Scroll to the top of the contacts list
+            const contactsContainer = document.querySelector('[data-contacts-list]')
+            if (contactsContainer) {
+                contactsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            } else {
+                // Fallback to window scroll
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+            }
+        }
+    }, [pagination?.page])
+
     const handleRetry = useCallback(async () => {
         if (!lastQuery) {
             return
@@ -138,7 +152,7 @@ export function Home() {
 
                         {/* Search Results */}
                         {(hasSearched || loading || error || contacts.length > 0) && (
-                            <div className="p-0.5 mt-4">
+                            <div className="p-0.5 mt-4" data-contacts-list>
                                 <ContactsList
                                     contacts={contacts}
                                     loading={loading}

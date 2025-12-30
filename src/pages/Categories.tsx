@@ -1,9 +1,9 @@
 import { ContactsList } from "@/components/contacts/contacts-list"
 import { PaginationControls } from "@/components/contacts/pagination-controls"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Users, Folder, HeartPulse, Briefcase, Building2 } from "lucide-react"
+import { ArrowLeft, Users, Folder, HeartPulse, Briefcase, Building2, Hotel, Train } from "lucide-react"
 import { BloodGroupSelector } from "@/components/blood-groups/blood-group-selector"
 import { DivisionSelector } from "@/components/divisions/division-selector"
 import { DesignationSelector } from "@/components/designations/designation-selector"
@@ -42,6 +42,18 @@ const categories: Category[] = [
     icon: <Folder className="h-6 w-6" />,
     description: "Emergency contacts",
   },
+  {
+    id: "hotels",
+    name: "Hotels",
+    icon: <Hotel className="h-6 w-6" />,
+    description: "View all hotel contacts",
+  },
+  {
+    id: "stations",
+    name: "Stations",
+    icon: <Train className="h-6 w-6" />,
+    description: "View all station contacts",
+  },
 ]
 
 export function Categories() {
@@ -68,6 +80,7 @@ export function Categories() {
   const [contactsLoading, setContactsLoading] = useState(false)
   const [contactsError, setContactsError] = useState<string | null>(null)
   const [pagination, setPagination] = useState<PaginationMeta | null>(null)
+  const contactsListRef = useRef<HTMLDivElement>(null)
 
   // Fetch blood groups and lobbies when blood-group category is selected
   useEffect(() => {
@@ -336,10 +349,91 @@ export function Categories() {
     fetchContacts()
   }, [selectedBloodGroups, selectedLobbies, selectedDesignations, contactsPage, selectedCategory])
 
+  // Fetch contacts for Hotels category
+  useEffect(() => {
+    const fetchContacts = async () => {
+      if (selectedCategory !== "hotels") {
+        return
+      }
+
+      try {
+        setContactsLoading(true)
+        setContactsError(null)
+        const response = await contactsService.filterContacts(
+          [],
+          [],
+          ["HOTEL"],
+          contactsPage,
+          50
+        )
+        setContacts(response.data)
+        setPagination(response.pagination)
+      } catch (err) {
+        setContactsError(err instanceof Error ? err.message : "Failed to fetch hotel contacts")
+        console.error("Error fetching hotel contacts:", err)
+        setContacts([])
+        setPagination(null)
+      } finally {
+        setContactsLoading(false)
+      }
+    }
+
+    fetchContacts()
+  }, [contactsPage, selectedCategory])
+
+  // Fetch contacts for Stations category
+  useEffect(() => {
+    const fetchContacts = async () => {
+      if (selectedCategory !== "stations") {
+        return
+      }
+
+      try {
+        setContactsLoading(true)
+        setContactsError(null)
+        const response = await contactsService.filterContacts(
+          [],
+          [],
+          ["STATION"],
+          contactsPage,
+          50
+        )
+        setContacts(response.data)
+        setPagination(response.pagination)
+      } catch (err) {
+        setContactsError(err instanceof Error ? err.message : "Failed to fetch station contacts")
+        console.error("Error fetching station contacts:", err)
+        setContacts([])
+        setPagination(null)
+      } finally {
+        setContactsLoading(false)
+      }
+    }
+
+    fetchContacts()
+  }, [contactsPage, selectedCategory])
+
   // Reset to page 1 when selection changes
   useEffect(() => {
     setContactsPage(1)
   }, [selectedBloodGroups, selectedLobbies, selectedDesignations])
+
+  // Scroll to top of contacts list when page changes and content is loaded
+  useEffect(() => {
+    if (contactsPage && !contactsLoading) {
+      // Use setTimeout to ensure DOM is updated after content loads
+      const timer = setTimeout(() => {
+        if (contactsListRef.current) {
+          contactsListRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        } else {
+          // Fallback: scroll to top of page
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+      }, 150)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [contactsPage, contactsLoading])
 
   const handleCategoryClick = (categoryId: string) => {
     setSearchParams({ category: categoryId })
@@ -357,6 +451,8 @@ export function Categories() {
     const isAllContactsCategory = selectedCategory === "all-contacts"
     const isBloodGroupCategory = selectedCategory === "blood-group"
     const isDivisionCategory = selectedCategory === "division"
+    const isHotelsCategory = selectedCategory === "hotels"
+    const isStationsCategory = selectedCategory === "stations"
     
     return (
       <div className="flex flex-col gap-6">
@@ -519,7 +615,7 @@ export function Categories() {
         {/* Contacts Table */}
         {isAllContactsCategory ? (
           selectedBloodGroups.length > 0 || selectedLobbies.length > 0 || selectedDesignations.length > 0 ? (
-            <div className="">
+            <div className="" ref={contactsListRef}>
               <div className="">
                 <ContactsList
                   contacts={contacts}
@@ -550,7 +646,7 @@ export function Categories() {
           )
         ) : isBloodGroupCategory ? (
           selectedBloodGroups.length > 0 || selectedLobbies.length > 0 ? (
-            <div className="">
+            <div className="" ref={contactsListRef}>
               <div className="">
                 <ContactsList
                   contacts={contacts}
@@ -581,7 +677,7 @@ export function Categories() {
           )
         ) : isDivisionCategory ? (
           selectedLobbies.length > 0 || selectedDesignations.length > 0 ? (
-            <div className="">
+            <div className="" ref={contactsListRef}>
               <div className="">
                 <ContactsList
                   contacts={contacts}
@@ -610,6 +706,27 @@ export function Categories() {
               </p>
             </div>
           )
+        ) : isHotelsCategory || isStationsCategory ? (
+          <div className="" ref={contactsListRef}>
+            <div className="">
+              <ContactsList
+                contacts={contacts}
+                loading={contactsLoading}
+                error={contactsError}
+                hasSearched={true}
+              />
+            </div>
+            {pagination && pagination.totalPages > 1 && (
+              <div className="border-t p-6">
+                <PaginationControls
+                  page={pagination.page}
+                  totalPages={pagination.totalPages}
+                  onPageChange={setContactsPage}
+                  loading={contactsLoading}
+                />
+              </div>
+            )}
+          </div>
         ) : (
           <div className="">
             <div className="">
