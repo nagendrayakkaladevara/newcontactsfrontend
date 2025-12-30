@@ -75,19 +75,23 @@ export function Home() {
         }
     }
 
-    // Scroll to top when page changes
+    // Scroll to top when page changes and content is loaded
     useEffect(() => {
-        if (pagination && pagination.page) {
-            // Scroll to the top of the contacts list
-            const contactsContainer = document.querySelector('[data-contacts-list]')
-            if (contactsContainer) {
-                contactsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            } else {
-                // Fallback to window scroll
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-            }
+        if (pagination && pagination.page && !loading) {
+            // Use setTimeout to ensure DOM is updated after content loads
+            const timer = setTimeout(() => {
+                const contactsContainer = document.querySelector('[data-contacts-list]')
+                if (contactsContainer) {
+                    contactsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                } else {
+                    // Fallback: scroll to top of page
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                }
+            }, 150)
+            
+            return () => clearTimeout(timer)
         }
-    }, [pagination?.page])
+    }, [pagination?.page, loading])
 
     const handleRetry = useCallback(async () => {
         if (!lastQuery) {
