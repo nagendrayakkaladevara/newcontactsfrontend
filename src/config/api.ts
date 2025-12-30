@@ -112,6 +112,7 @@ export const API_ENDPOINTS = {
     visits: {
       increment: "/api/analytics/visits",
       get: "/api/analytics/visits",
+      history: (days: number = 30) => `/api/analytics/visits/history?days=${days}`,
     },
     overview: "/api/analytics/overview",
     bloodGroups: "/api/analytics/blood-groups",

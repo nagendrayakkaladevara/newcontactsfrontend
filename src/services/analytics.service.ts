@@ -12,12 +12,14 @@ import type {
   DesignationDistributionResponse,
   GrowthResponse,
   RecentContactsResponse,
+  VisitHistoryResponse,
   AnalyticsOverview,
   BloodGroupDistribution,
   LobbyDistribution,
   DesignationDistribution,
   GrowthData,
   RecentContacts,
+  VisitHistory,
 } from "@/types/analytics"
 
 interface VisitCountResponse {
@@ -115,6 +117,21 @@ export class AnalyticsService {
       API_ENDPOINTS.analytics.recent(limit)
     )
     return response.data
+  }
+
+  /**
+   * Get visits history
+   * @param days - Number of days to analyze (default: 30)
+   */
+  async getVisitsHistory(days: number = 30): Promise<VisitHistory> {
+    const response = await apiClient.get<VisitHistoryResponse>(
+      API_ENDPOINTS.analytics.visits.history(days)
+    )
+    return {
+      period: response.period,
+      totalVisits: response.totalVisits,
+      data: response.data,
+    }
   }
 }
 

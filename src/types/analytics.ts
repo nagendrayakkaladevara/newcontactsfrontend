@@ -93,3 +93,21 @@ export interface RecentContactsResponse {
   data: RecentContacts
 }
 
+export interface VisitHistoryItem {
+  date: string
+  count: number
+}
+
+export interface VisitHistory {
+  period: string
+  totalVisits: number
+  data: VisitHistoryItem[]
+}
+
+export interface VisitHistoryResponse {
+  success: boolean
+  data: VisitHistoryItem[]
+  period: string
+  totalVisits: number
+}
+

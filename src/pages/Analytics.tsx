@@ -19,7 +19,9 @@ import type {
   DesignationDistribution,
   GrowthData,
   RecentContacts,
+  VisitHistory,
 } from "@/types/analytics"
+import { VisitsHistoryChart } from "@/components/analytics/visits-history-chart"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import { formatPhoneNumber } from "@/lib/phone-formatter"
@@ -31,23 +33,46 @@ export function Analytics() {
   const [designationDist, setDesignationDist] = React.useState<DesignationDistribution | null>(null)
   const [growthData, setGrowthData] = React.useState<GrowthData | null>(null)
   const [recentContacts, setRecentContacts] = React.useState<RecentContacts | null>(null)
+  // Test data for visits history chart (commented out - testing completed)
+  /*
+  const testVisitsHistory: VisitHistory = {
+    period: "7 days",
+    totalVisits: 1000,
+    data: [
+      { date: "2025-12-23", count: 5 },
+      { date: "2025-12-24", count: 8 },
+      { date: "2025-12-25", count: 12 },
+      { date: "2025-12-26", count: 10 },
+      { date: "2025-12-27", count: 15 },
+      { date: "2025-12-28", count: 20 },
+      { date: "2025-12-29", count: 18 },
+    ],
+  }
+  */
+
+  const [visitsHistory, setVisitsHistory] = React.useState<VisitHistory | null>(null)
   const [loading, setLoading] = React.useState(true)
+  const [visitsLoading, setVisitsLoading] = React.useState(false)
+  const [growthLoading, setGrowthLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [growthDays, setGrowthDays] = React.useState(7)
+  const [visitsDays, setVisitsDays] = React.useState(7)
 
+  // Initial load - fetch all data except visits history (which depends on visitsDays)
   React.useEffect(() => {
     const fetchAnalytics = async () => {
       try {
         setLoading(true)
         setError(null)
 
-        const [overviewData, bgData, lobbyData, desData, growth, recent] = await Promise.all([
+        const [overviewData, bgData, lobbyData, desData, growth, recent, visits] = await Promise.all([
           analyticsService.getOverview(),
           analyticsService.getBloodGroupDistribution(),
           analyticsService.getLobbyDistribution(),
           analyticsService.getDesignationDistribution(),
           analyticsService.getGrowth(growthDays),
           analyticsService.getRecentContacts(10),
+          analyticsService.getVisitsHistory(visitsDays),
         ])
 
         setOverview(overviewData)
@@ -56,6 +81,7 @@ export function Analytics() {
         setDesignationDist(desData)
         setGrowthData(growth)
         setRecentContacts(recent)
+        setVisitsHistory(visits)
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch analytics")
         console.error("Error fetching analytics:", err)
@@ -65,18 +91,64 @@ export function Analytics() {
     }
 
     fetchAnalytics()
+  }, [])
+
+  // Separate effect for growth data when growthDays changes (after initial load)
+  const isInitialMountGrowth = React.useRef(true)
+  React.useEffect(() => {
+    const fetchGrowthData = async () => {
+      try {
+        setGrowthLoading(true)
+        const growth = await analyticsService.getGrowth(growthDays)
+        setGrowthData(growth)
+      } catch (err) {
+        console.error("Error fetching growth data:", err)
+      } finally {
+        setGrowthLoading(false)
+      }
+    }
+
+    // Skip on initial mount (growth data is already fetched in initial load)
+    if (isInitialMountGrowth.current) {
+      isInitialMountGrowth.current = false
+      return
+    }
+
+    fetchGrowthData()
   }, [growthDays])
+
+  // Separate effect for visits history when visitsDays changes (after initial load)
+  const isInitialMountVisits = React.useRef(true)
+  React.useEffect(() => {
+    const fetchVisitsHistory = async () => {
+      try {
+        setVisitsLoading(true)
+        const visits = await analyticsService.getVisitsHistory(visitsDays)
+        setVisitsHistory(visits)
+      } catch (err) {
+        console.error("Error fetching visits history:", err)
+      } finally {
+        setVisitsLoading(false)
+      }
+    }
+
+    // Skip on initial mount (visits history is already fetched in initial load)
+    if (isInitialMountVisits.current) {
+      isInitialMountVisits.current = false
+      return
+    }
+
+    fetchVisitsHistory()
+  }, [visitsDays])
 
   const handleGrowthDaysChange = (days: number) => {
     setGrowthDays(days)
-    setLoading(true)
-    analyticsService
-      .getGrowth(days)
-      .then(setGrowthData)
-      .catch((err) => {
-        console.error("Error fetching growth data:", err)
-      })
-      .finally(() => setLoading(false))
+    // Loading state is handled by the useEffect
+  }
+
+  const handleVisitsDaysChange = (days: number) => {
+    setVisitsDays(days)
+    // Loading state is handled by the useEffect
   }
 
   if (loading) {
@@ -210,11 +282,22 @@ export function Analytics() {
         />
       )}
 
+      {/* Visits History Chart */}
+      <VisitsHistoryChart
+        data={visitsHistory}
+        days={visitsDays}
+        loading={visitsLoading}
+        onDaysChange={handleVisitsDaysChange}
+      />
+
       {/* Growth Chart and Recent Contacts */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {growthData && (
-          <GrowthChart data={growthData} days={growthDays} onDaysChange={handleGrowthDaysChange} />
-        )}
+        <GrowthChart
+          data={growthData}
+          days={growthDays}
+          loading={growthLoading}
+          onDaysChange={handleGrowthDaysChange}
+        />
 
         {recentContacts && <RecentContactsCard data={recentContacts} />}
       </div>
@@ -407,14 +490,15 @@ function DistributionChart({ title, data, total, getLabel, icon: Icon, color }: 
 }
 
 interface GrowthChartProps {
-  data: GrowthData
+  data: GrowthData | null
   days: number
+  loading?: boolean
   onDaysChange: (days: number) => void
 }
 
-function GrowthChart({ data, days, onDaysChange }: GrowthChartProps) {
-  const maxCumulative = Math.max(...data.dailyGrowth.map((d) => d.cumulative), 1)
-  const maxDaily = Math.max(...data.dailyGrowth.map((d) => d.count), 1)
+function GrowthChart({ data, days, loading = false, onDaysChange }: GrowthChartProps) {
+  const maxCumulative = data ? Math.max(...data.dailyGrowth.map((d) => d.cumulative), 1) : 1
+  const maxDaily = data ? Math.max(...data.dailyGrowth.map((d) => d.count), 1) : 1
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -430,7 +514,7 @@ function GrowthChart({ data, days, onDaysChange }: GrowthChartProps) {
           </div>
           <div>
             <h3 className="font-semibold">Contacts Growth</h3>
-            <p className="text-sm text-muted-foreground">{data.period}</p>
+            <p className="text-sm text-muted-foreground">{loading ? "Loading..." : data?.period || ""}</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -455,12 +539,19 @@ function GrowthChart({ data, days, onDaysChange }: GrowthChartProps) {
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full bg-green-500" />
           <span className="text-sm text-muted-foreground">Total Added</span>
-          <span className="text-sm font-semibold">{data.totalAdded}</span>
+          <span className="text-sm font-semibold">
+            {loading ? "..." : data?.totalAdded.toLocaleString() || "0"}
+          </span>
         </div>
       </div>
 
-      <div className="space-y-2">
-        {data.dailyGrowth.slice(-14).map((day, index) => {
+      {loading && !data ? (
+        <div className="flex h-[200px] items-center justify-center">
+          <div className="text-sm text-muted-foreground">Loading chart data...</div>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {data?.dailyGrowth.slice(-14).map((day, index) => {
           const cumulativeWidth = (day.cumulative / maxCumulative) * 100
           const dailyWidth = maxDaily > 0 ? (day.count / maxDaily) * 100 : 0
 
@@ -485,8 +576,9 @@ function GrowthChart({ data, days, onDaysChange }: GrowthChartProps) {
               </div>
             </div>
           )
-        })}
-      </div>
+        }) || []}
+        </div>
+      )}
     </div>
   )
 }
