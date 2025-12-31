@@ -36,29 +36,33 @@ export function PaginationControls({
   }
 
   return (
-    <div className="flex items-center justify-between border-t px-4 py-3">
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handlePrevious}
-          disabled={page === 1 || loading}
-        >
-          <ChevronLeft className="h-4 w-4" />
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleNext}
-          disabled={page === totalPages || loading}
-        >
-          Next
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
-      <div className="text-sm text-muted-foreground">
-        Page {page} of {totalPages}
+    <div className="border-t px-4 py-3">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
+          <Button
+            variant={page === 1 ? "destructive" : "default"}
+            size="sm"
+            onClick={handlePrevious}
+            disabled={page === 1 || loading}
+            className="flex-1 sm:flex-initial min-w-0"
+          >
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            Previous
+          </Button>
+          <Button
+            variant={page === totalPages ? "destructive" : "default"}
+            size="sm"
+            onClick={handleNext}
+            disabled={page === totalPages || loading}
+            className="flex-1 sm:flex-initial min-w-0"
+          >
+            Next
+            <ChevronRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+        <div className="text-sm text-muted-foreground text-center sm:text-left whitespace-nowrap">
+          Page {page} of {totalPages}
+        </div>
       </div>
     </div>
   )

@@ -3,7 +3,7 @@ import { PaginationControls } from "@/components/contacts/pagination-controls"
 import { useState, useEffect, useRef } from "react"
 import { useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Users, Folder, HeartPulse, Briefcase, Building2, Hotel, Train } from "lucide-react"
+import { ArrowLeft, Users, HeartPulse, Briefcase, Building2, Hotel, Train, Search } from "lucide-react"
 import { BloodGroupSelector } from "@/components/blood-groups/blood-group-selector"
 import { DivisionSelector } from "@/components/divisions/division-selector"
 import { DesignationSelector } from "@/components/designations/designation-selector"
@@ -27,21 +27,15 @@ const categories: Category[] = [
   {
     id: "blood-group",
     name: "Blood Group",
-    icon: <HeartPulse type="h-6 w-6" />,
+    icon: <HeartPulse className="h-6 w-6" />,
     description: "Blood Group contacts are sorted by blood group",
   },
-  {
-    id: "division",
-    name: "Division/Designation",
-    icon: <Briefcase className="h-6 w-6" />,
-    description: "Filter contacts by division (lobby) and/or designation",
-  },
-  {
-    id: "emergency-contacts",
-    name: "Emergency Contacts",
-    icon: <Folder className="h-6 w-6" />,
-    description: "Emergency contacts",
-  },
+  // {
+  //   id: "emergency-contacts",
+  //   name: "Emergency Contacts",
+  //   icon: <Folder className="h-6 w-6" />,
+  //   description: "Emergency contacts",
+  // },
   {
     id: "hotels",
     name: "Hotels",
@@ -54,6 +48,12 @@ const categories: Category[] = [
     icon: <Train className="h-6 w-6" />,
     description: "View all station contacts",
   },
+  {
+    id: "division",
+    name: "Division/Designation",
+    icon: <Briefcase className="h-6 w-6" />,
+    description: "Filter contacts by division (lobby) and/or designation",
+  }
 ]
 
 export function Categories() {
@@ -81,6 +81,7 @@ export function Categories() {
   const [contactsError, setContactsError] = useState<string | null>(null)
   const [pagination, setPagination] = useState<PaginationMeta | null>(null)
   const contactsListRef = useRef<HTMLDivElement>(null)
+  const [hasSearched, setHasSearched] = useState(false)
 
   // Fetch blood groups and lobbies when blood-group category is selected
   useEffect(() => {
@@ -224,22 +225,34 @@ export function Categories() {
     }
   }, [selectedCategory])
 
-  // Fetch contacts by blood group and/or lobby when selections are made
+  // Handler for Blood Group category search
+  const handleBloodGroupSearch = () => {
+    if (selectedBloodGroups.length === 0 && selectedLobbies.length === 0) {
+      setContacts([])
+      setPagination(null)
+      setContactsError(null)
+      setHasSearched(false)
+      return
+    }
+
+    // Reset to page 1 and trigger search
+    // The useEffect will handle the actual API call
+    setContactsPage(1)
+    setHasSearched(true)
+  }
+
+  // Fetch contacts by blood group when page changes (after initial search)
+  // Only depends on contactsPage - filters are captured when hasSearched is set
   useEffect(() => {
+    if (selectedCategory !== "blood-group" || !hasSearched) {
+      return
+    }
+
+    if (selectedBloodGroups.length === 0 && selectedLobbies.length === 0) {
+      return
+    }
+
     const fetchContacts = async () => {
-      // Only fetch if blood-group category is selected
-      if (selectedCategory !== "blood-group") {
-        return
-      }
-
-      // If neither blood groups nor lobbies selected, show empty state
-      if (selectedBloodGroups.length === 0 && selectedLobbies.length === 0) {
-        setContacts([])
-        setPagination(null)
-        setContactsError(null)
-        return
-      }
-
       try {
         setContactsLoading(true)
         setContactsError(null)
@@ -262,24 +275,37 @@ export function Categories() {
     }
 
     fetchContacts()
-  }, [selectedBloodGroups, selectedLobbies, contactsPage, selectedCategory])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contactsPage, selectedCategory, hasSearched])
 
-  // Fetch contacts by lobby and/or designation when selections are made
+  // Handler for Division/Designation category search
+  const handleDivisionSearch = () => {
+    if (selectedLobbies.length === 0 && selectedDesignations.length === 0) {
+      setContacts([])
+      setPagination(null)
+      setContactsError(null)
+      setHasSearched(false)
+      return
+    }
+
+    // Reset to page 1 and trigger search
+    // The useEffect will handle the actual API call
+    setContactsPage(1)
+    setHasSearched(true)
+  }
+
+  // Fetch contacts by lobby/designation when page changes (after initial search)
+  // Only depends on contactsPage - filters are captured when hasSearched is set
   useEffect(() => {
+    if (selectedCategory !== "division" || !hasSearched) {
+      return
+    }
+
+    if (selectedLobbies.length === 0 && selectedDesignations.length === 0) {
+      return
+    }
+
     const fetchContacts = async () => {
-      // Only fetch if division category is selected
-      if (selectedCategory !== "division") {
-        return
-      }
-
-      // If neither lobbies nor designations selected, show empty state
-      if (selectedLobbies.length === 0 && selectedDesignations.length === 0) {
-        setContacts([])
-        setPagination(null)
-        setContactsError(null)
-        return
-      }
-
       try {
         setContactsLoading(true)
         setContactsError(null)
@@ -302,28 +328,45 @@ export function Categories() {
     }
 
     fetchContacts()
-  }, [selectedLobbies, selectedDesignations, contactsPage, selectedCategory])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contactsPage, selectedCategory, hasSearched])
 
-  // Fetch contacts using unified filter when all-contacts category is selected
+  // Handler for All Contacts category search
+  const handleAllContactsSearch = () => {
+    if (
+      selectedBloodGroups.length === 0 &&
+      selectedLobbies.length === 0 &&
+      selectedDesignations.length === 0
+    ) {
+      setContacts([])
+      setPagination(null)
+      setContactsError(null)
+      setHasSearched(false)
+      return
+    }
+
+    // Reset to page 1 and trigger search
+    // The useEffect will handle the actual API call
+    setContactsPage(1)
+    setHasSearched(true)
+  }
+
+  // Fetch contacts when page changes (after initial search)
+  // Only depends on contactsPage - filters are captured when hasSearched is set
   useEffect(() => {
+    if (selectedCategory !== "all-contacts" || !hasSearched) {
+      return
+    }
+
+    if (
+      selectedBloodGroups.length === 0 &&
+      selectedLobbies.length === 0 &&
+      selectedDesignations.length === 0
+    ) {
+      return
+    }
+
     const fetchContacts = async () => {
-      // Only fetch if all-contacts category is selected
-      if (selectedCategory !== "all-contacts") {
-        return
-      }
-
-      // If no filters selected, show empty state
-      if (
-        selectedBloodGroups.length === 0 &&
-        selectedLobbies.length === 0 &&
-        selectedDesignations.length === 0
-      ) {
-        setContacts([])
-        setPagination(null)
-        setContactsError(null)
-        return
-      }
-
       try {
         setContactsLoading(true)
         setContactsError(null)
@@ -347,7 +390,8 @@ export function Categories() {
     }
 
     fetchContacts()
-  }, [selectedBloodGroups, selectedLobbies, selectedDesignations, contactsPage, selectedCategory])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contactsPage, selectedCategory, hasSearched])
 
   // Fetch contacts for Hotels category
   useEffect(() => {
@@ -413,9 +457,12 @@ export function Categories() {
     fetchContacts()
   }, [contactsPage, selectedCategory])
 
-  // Reset to page 1 when selection changes
+  // Reset search state when filters change
   useEffect(() => {
-    setContactsPage(1)
+    setHasSearched(false)
+    setContacts([])
+    setPagination(null)
+    setContactsError(null)
   }, [selectedBloodGroups, selectedLobbies, selectedDesignations])
 
   // Scroll to top of contacts list when page changes and content is loaded
@@ -424,7 +471,13 @@ export function Categories() {
       // Use setTimeout to ensure DOM is updated after content loads
       const timer = setTimeout(() => {
         if (contactsListRef.current) {
-          contactsListRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          const element = contactsListRef.current
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+          const offsetPosition = elementPosition - 10 // 10px above the element
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          })
         } else {
           // Fallback: scroll to top of page
           window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -438,6 +491,10 @@ export function Categories() {
   const handleCategoryClick = (categoryId: string) => {
     setSearchParams({ category: categoryId })
     setContactsPage(1)
+    setHasSearched(false)
+    setContacts([])
+    setPagination(null)
+    setContactsError(null)
   }
 
   const handleBack = () => {
@@ -533,6 +590,17 @@ export function Categories() {
                 />
               </div>
             </div>
+            {/* Search Button */}
+            <div className="mt-4 pt-4 border-t">
+              <Button
+                onClick={handleAllContactsSearch}
+                disabled={contactsLoading || (selectedBloodGroups.length === 0 && selectedLobbies.length === 0 && selectedDesignations.length === 0)}
+                className={`w-full ${!hasSearched && (selectedBloodGroups.length > 0 || selectedLobbies.length > 0 || selectedDesignations.length > 0) ? 'animate-pulse' : ''}`}
+              >
+                <Search className="h-4 w-4" />
+                Search Contacts
+              </Button>
+            </div>
           </div>
         )}
 
@@ -574,6 +642,17 @@ export function Categories() {
                 error={lobbiesError}
               />
             </div>
+            {/* Search Button */}
+            <div className="rounded-lg border bg-card p-4 shadow-sm sm:p-6">
+              <Button
+                onClick={handleBloodGroupSearch}
+                disabled={contactsLoading || (selectedBloodGroups.length === 0 && selectedLobbies.length === 0)}
+                className={`w-full ${!hasSearched && (selectedBloodGroups.length > 0 || selectedLobbies.length > 0) ? 'animate-bounce' : ''}`}
+              >
+                <Search className="h-4 w-4" />
+                Search Contacts
+              </Button>
+            </div>
           </>
         )}
 
@@ -609,12 +688,23 @@ export function Categories() {
                 error={designationsError}
               />
             </div>
+            {/* Search Button */}
+            <div className="mt-4 pt-4 border-t">
+              <Button
+                onClick={handleDivisionSearch}
+                disabled={contactsLoading || (selectedLobbies.length === 0 && selectedDesignations.length === 0)}
+                className={`w-full ${!hasSearched && (selectedLobbies.length > 0 || selectedDesignations.length > 0) ? 'animate-pulse' : ''}`}
+              >
+                <Search className="h-4 w-4" />
+                Search Contacts
+              </Button>
+            </div>
           </>
         )}
 
         {/* Contacts Table */}
         {isAllContactsCategory ? (
-          selectedBloodGroups.length > 0 || selectedLobbies.length > 0 || selectedDesignations.length > 0 ? (
+          hasSearched && (selectedBloodGroups.length > 0 || selectedLobbies.length > 0 || selectedDesignations.length > 0) ? (
             <div className="" ref={contactsListRef}>
               <div className="">
                 <ContactsList
@@ -645,7 +735,7 @@ export function Categories() {
             </div>
           )
         ) : isBloodGroupCategory ? (
-          selectedBloodGroups.length > 0 || selectedLobbies.length > 0 ? (
+          hasSearched && (selectedBloodGroups.length > 0 || selectedLobbies.length > 0) ? (
             <div className="" ref={contactsListRef}>
               <div className="">
                 <ContactsList
@@ -676,7 +766,7 @@ export function Categories() {
             </div>
           )
         ) : isDivisionCategory ? (
-          selectedLobbies.length > 0 || selectedDesignations.length > 0 ? (
+          hasSearched && (selectedLobbies.length > 0 || selectedDesignations.length > 0) ? (
             <div className="" ref={contactsListRef}>
               <div className="">
                 <ContactsList

@@ -79,7 +79,13 @@ export function BloodGroups() {
   // Scroll to top of contacts list when page changes
   React.useEffect(() => {
     if (contactsPage && contactsListRef.current) {
-      contactsListRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      const element = contactsListRef.current
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+      const offsetPosition = elementPosition - 10 // 10px above the element
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
     }
   }, [contactsPage])
 

@@ -82,7 +82,12 @@ export function Home() {
             const timer = setTimeout(() => {
                 const contactsContainer = document.querySelector('[data-contacts-list]')
                 if (contactsContainer) {
-                    contactsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    const elementPosition = contactsContainer.getBoundingClientRect().top + window.pageYOffset
+                    const offsetPosition = elementPosition - 10 // 10px above the element
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    })
                 } else {
                     // Fallback: scroll to top of page
                     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -144,7 +149,7 @@ export function Home() {
                     </TabsTrigger>
                     <TabsTrigger value="documents" className="flex items-center gap-2 border-gray-200 rounded-md">
                         <FileText className="h-4 w-4" />
-                        Important Documents
+                        Imp Documents
                     </TabsTrigger>
                 </TabsList>
 
