@@ -4,10 +4,11 @@
  */
 
 import { useState, useEffect, useRef } from "react"
-import { Search, X, Mic, MicOff } from "lucide-react"
+import { Search, X, Mic, MicOff, StopCircleIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "../ui/button"
 
 // Web Speech API type definitions
 interface SpeechRecognition extends EventTarget {
@@ -108,12 +109,26 @@ export function ContactsSearch({ onSearch, loading }: ContactsSearchProps) {
       }
       
       recognition.onresult = (event: SpeechRecognitionEvent) => {
-        const transcript = event.results[0][0].transcript.trim()
-        setQuery(transcript)
-        // Set last searched query to prevent debounced effect from searching again
-        lastSearchedQueryRef.current = transcript
-        // Trigger search immediately for voice input
-        onSearchRef.current(transcript, false)
+        // Safely access transcript with proper checks
+        if (
+          event.results &&
+          event.results.length > 0 &&
+          event.results[0] &&
+          event.results[0].length > 0 &&
+          event.results[0][0] &&
+          event.results[0][0].transcript
+        ) {
+          const transcript = event.results[0][0].transcript.trim()
+          if (transcript) {
+            setQuery(transcript)
+            // Set last searched query to prevent debounced effect from searching again
+            lastSearchedQueryRef.current = transcript
+            // Trigger search immediately for voice input
+            onSearchRef.current(transcript, false)
+          }
+        } else {
+          console.warn('Speech recognition result is empty or invalid')
+        }
       }
       
       recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
@@ -267,18 +282,18 @@ export function ContactsSearch({ onSearch, loading }: ContactsSearchProps) {
               <div className="text-center space-y-2">
                 <h3 className="text-xl font-semibold">Listening...</h3>
                 <p className="text-sm text-muted-foreground">
-                  Speak now to search by name
+                  Speak now to Search Contacts by name
                 </p>
               </div>
               
               {/* Stop Button */}
-              <button
-                type="button"
+              <Button
+                variant="destructive"
                 onClick={handleMicClick}
-                className="px-6 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors font-medium"
               >
-                Stop Listening
-              </button>
+                <StopCircleIcon className="h-4 w-4" />
+                Stop
+              </Button>
             </div>
           </div>
         </div>
