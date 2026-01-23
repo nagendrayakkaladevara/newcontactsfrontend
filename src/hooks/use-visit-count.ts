@@ -51,6 +51,7 @@ export function useVisitCount(
       const count = await analyticsService.incrementVisitCount()
       setVisitCount(count)
       setError(null)
+      setLoading(false)
     } catch (err) {
       const errorMessage =
         err instanceof ApiError
@@ -66,6 +67,9 @@ export function useVisitCount(
       if (autoIncrement) {
         // Increment first, then fetch to get updated count
         await incrementCount()
+        // Always fetch after increment to ensure we have the latest count
+        // and to clear loading state if increment failed
+        await fetchCount()
       } else if (autoFetch) {
         // Just fetch without incrementing
         await fetchCount()
