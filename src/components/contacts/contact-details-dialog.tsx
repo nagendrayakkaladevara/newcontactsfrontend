@@ -7,7 +7,6 @@ import { Phone, Building2, Briefcase, HeartPulse, Copy, Check } from "lucide-rea
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
